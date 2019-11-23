@@ -20,8 +20,8 @@ CREATE TABLE all_series (
 	genre3 INT,
 	genre4 INT,
 	genre5 INT,
-	score FLOAT,
-	votes INT,
+	score FLOAT DEFAULT '0',
+	votes INT DEFAULT '0',
 	PRIMARY KEY (series_id),
 	FOREIGN KEY (genre1) REFERENCES genre(genre_id),
 	FOREIGN KEY (genre2) REFERENCES genre(genre_id),
@@ -36,6 +36,10 @@ INSERT INTO all_series(series_name, genre1, genre2, genre3) VALUE ('sherlok', (S
 
 INSERT INTO all_series(series_name, genre1, genre2, genre3) VALUE ('ncis', (SELECT genre_id FROM genre WHERE genre_name='action & adventure'),
 (SELECT genre_id FROM genre WHERE genre_name = 'drama'), (SELECT genre_id FROM genre WHERE genre_name='crime'));
+
+INSERT INTO all_series(series_name, genre1, genre2, genre3) VALUE ('supernatural', (SELECT genre_id FROM genre WHERE genre_name='sci-fi & fantasy'),
+(SELECT genre_id FROM genre WHERE genre_name = 'drama'), (SELECT genre_id FROM genre WHERE genre_name='mystery'));
+
 
 --user's personal table
 CREATE TABLE testuser (
@@ -85,9 +89,45 @@ INSERT INTO comments (series_id, comment, user_id) VALUES
 ((SELECT series_id FROM all_series WHERE series_name='ncis'),('Dont remember already where it all started from'),
 (SELECT user_id FROM users WHERE username='testuser2'));
 
---selecting all comments for one show
+--selecting all comments for one show, display user's id
 SELECT comment, user_id FROM comments WHERE series_id=(SELECT series_id FROM all_series WHERE series_name='ncis');
+
+--selecting all comments for one show, display user's name
+SELECT comment, username FROM comments, users
+WHERE series_id=(SELECT series_id FROM all_series WHERE series_name='ncis')
+AND username=(SELECT username from users WHERE user_id=comments.user_id);
 
 --selecting one user's comments for all shows
 SELECT series_name, comment FROM all_series, comments  WHERE user_id=(SELECT user_id FROM users WHERE username='testuser')
  AND series_name=(SELECT series_name FROM all_series WHERE series_id= comments.series_id);
+
+--updating score and votes
+UPDATE all_series SET score=score+5, votes=votes+1 WHERE series_name='ncis';
+
+--showing name, votes and rating of one show
+SELECT series_name, votes, (score/votes) AS rating FROM all_series WHERE series_name='ncis';
+
+----showing name, votes and rating of all shows
+SELECT series_name, votes, (score/votes) AS rating FROM all_series;
+
+--showing shows with a particular rating
+SELECT series_name, votes, (score/votes) AS rating from all_series WHERE (score/votes) >3;
+
+--showing shows with a particular rating and genre
+SELECT series_name, votes, (score/votes) AS rating from all_series  WHERE
+(score/votes>3) AND
+(genre2=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre1=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre3=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre4=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre5=(SELECT genre_id FROM genre WHERE genre_name='crime'));
+
+--showing shows with a particular rating and genre that are not in a user's own table
+SELECT series_name, votes, (score/votes) AS rating from all_series, testuser  WHERE
+(score/votes>2) AND
+(genre2=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre1=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre3=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre4=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama')) AND
+(all_series.series_id !=(SELECT series_id FROM testuser));

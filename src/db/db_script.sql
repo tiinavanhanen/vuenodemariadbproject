@@ -63,7 +63,7 @@ CREATE TABLE comments(
 	FOREIGN KEY (series_id) REFERENCES all_series(series_id)
 );
 
---adding a user
+--adding a new user
 INSERT INTO USERS (username, email, password) VALUES (('testuser'), ('testuser@test.test'), ('test'));
 INSERT INTO USERS (username, email, password) VALUES (('testuser2'), ('testuser2@test.test'), ('test2'));
 INSERT INTO USERS (username, email, password) VALUES (('testuser3'), ('testuser3@test.test'), ('test3'));

@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 //var url = require('url');
 //var mysql = require("mysql");
-const urlencodedParser = require('urlencoded-parser'); // ES5
+//const urlencodedParser = require('urlencoded-parser'); // ES5
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const seriesApi = require('../server/seriesApi.js');
@@ -15,7 +15,7 @@ app.use(function(req, res, next) {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(urlencodedParser);
+//app.use(urlencodedParser);
 
 app.use(cors({
     'allowedHeaders': ['Content-Type'],

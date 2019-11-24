@@ -9,7 +9,10 @@
           <router-link to="/create" class="nav-link">Create Post</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/posts" class="nav-link">All hows</router-link>
+          <router-link to="/posts" class="nav-link">All shows</router-link>
+        </li>
+        <li class="nav-item">
+          <router-link to="/comments" class="nav-link">Comments</router-link>
         </li>
       </ul>
     </nav><br />

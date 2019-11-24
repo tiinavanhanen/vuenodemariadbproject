@@ -11,6 +11,7 @@ import HomeComponent from './components/HomeComponent.vue';
 import CreateComponent from './components/CreateComponent.vue';
 import IndexComponent from './components/IndexComponent.vue';
 import EditComponent from './components/EditComponent.vue';
+import CommentsComponent from './components/CommentsComponent.vue';
 
 const routes = [
   {
@@ -32,6 +33,11 @@ const routes = [
     name: 'edit',
     path: '/edit/:id',
     component: EditComponent
+  },
+  {
+    name: 'comments',
+    path: '/comments',
+    component: CommentsComponent
   }
 ];
 

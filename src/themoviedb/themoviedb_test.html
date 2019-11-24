@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+    <script src="../themoviedb/themoviedb.js"></script>
+</head>
+<body>
+<p>testataan</p>
+
+<input id="searching" placeholder="write show's name">
+<button id="button2">get show-info</button>
+<div id="results">
+    <p id="name"></p>
+    <p id="about"></p>
+    <img id="poster">
+</div>
+</body>
+<script>
+    document.getElementById("button2").onclick = function () {
+        var nimi = document.getElementById("searching").value;
+        theMovieDb.search.getTv({"query": nimi}, show, showerror);
+    };
+
+    function show(data) {
+        console.log(data);
+        data = JSON.parse(data);
+        var name= document.getElementById("name");
+        name.innerHTML=data.results[0].original_name;
+        var about = document.getElementById("about");
+        about.innerHTML=data.results[0].overview;
+        var poster = document.getElementById("poster");
+        poster.src = "https://image.tmdb.org/t/p/w500" + data.results[0].poster_path;
+    }
+
+    function showerror(){
+        console.log("virhe");
+    }
+</script>
+</html>

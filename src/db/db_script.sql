@@ -78,6 +78,9 @@ INSERT INTO testuser (series_id, episode) VALUES ((SELECT series_id FROM all_ser
 --displaying all series from a user's table. mode: series name, season, episode
 SELECT series_name, season, episode FROM all_series, testuser  WHERE all_series.series_id=(SELECT series_id FROM testuser);
 
+--updating show's data in user's table
+UPDATE testuser SET episode=3 WHERE series_id=(SELECT series_id FROM all_series WHERE series_name='sherlok');
+
 --adding comments
 INSERT INTO comments (series_id, comment, user_id) VALUES
 ((SELECT series_id FROM all_series WHERE series_name='sherlok'),('Worth watching'), (SELECT user_id FROM users WHERE username='testuser'));

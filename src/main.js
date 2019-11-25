@@ -38,6 +38,11 @@ const routes = [
     name: 'comments',
     path: '/comments',
     component: CommentsComponent
+  },
+  {
+    name: 'addcomment',
+    path: '/addcomments',
+    component: CommentsComponent
   }
 ];
 

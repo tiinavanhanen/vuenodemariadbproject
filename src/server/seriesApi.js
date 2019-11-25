@@ -42,4 +42,25 @@ router.get("/comments", function (req, res) {
     });
 });
 
+router.get("/addcomment", function (req, res) {
+    /* eslint-disable no-console */
+    var q = url.parse(req.url, true).query;
+    var name = q.showname;
+    console.log("comments showname" + name);
+    var comment = q.comment;
+    var sql = "INSERT INTO comments (series_id, comment, user_id) VALUES\n" +
+        "((SELECT series_id FROM all_series WHERE series_name=?),(?),\n" +
+        "(SELECT user_id FROM users WHERE username='testuser2'));";
+    con.query(sql, [name, comment],function (err, result) {
+        if (err)
+            throw (err);
+        else{
+            console.log(result);
+
+            res.send(JSON.stringify(result));
+        }
+    });
+});
+
+
 module.exports = router;

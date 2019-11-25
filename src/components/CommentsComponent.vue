@@ -11,6 +11,14 @@
                 />
                 <button>Display comments</button>
             </form>
+            <form @submit.prevent="handleCommentSubmit" id="addComment" style="display: none">
+                <label>Add comment</label>
+                <input
+                        type="text"
+                        v-model="show.comment"
+                />
+                <button>Add</button>
+            </form>
             <table class="table table-striped" v-if="hasComments">
 
                 <thead>
@@ -54,7 +62,8 @@
                 },
                 comments: [],
                 show: {
-                  name: ''
+                    name: '',
+                    comment:''
                 },
                 isLoading: true,
             }
@@ -68,7 +77,25 @@
                 /* eslint-disable no-console */
                 console.log( this.show.name);
                 /* eslint-enable no-console */
-                this.loadShows(this.show.name)
+                this.loadShows(this.show.name);
+                document.getElementById("addComment").style="display: initial"
+            },
+
+            handleCommentSubmit(){
+                const body = {
+                    "showname": this.show.name,
+                    "comment": this.show.comment
+                };
+                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&comment=" + body.comment;
+                axios
+                    .get(uri)
+                    .then( responce => {
+                        /* eslint-disable no-console */
+                        console.log( "got a comment result");
+                        console.log(responce);
+                        this.loadShows();
+
+                    });
             },
 
             loadShows() {

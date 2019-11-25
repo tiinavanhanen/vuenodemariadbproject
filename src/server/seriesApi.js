@@ -62,5 +62,29 @@ router.get("/addcomment", function (req, res) {
     });
 });
 
+router.get("/recommend", function (req, res) {
+    /* eslint-disable no-console */
+    var q = url.parse(req.url, true).query;
+    var username = q.username;
+    //console.log(username);
+    var genre = q.genre;
+    var sql = "SELECT series_name, votes, (score/votes) AS rating from all_series, ?? WHERE (score/votes>2) AND" +
+        "(genre2=(SELECT genre_id FROM genre WHERE genre_name=?) " +
+        "OR genre1=(SELECT genre_id FROM genre WHERE genre_name=?)" +
+        "OR genre3=(SELECT genre_id FROM genre WHERE genre_name=?)" +
+        "OR genre4=(SELECT genre_id FROM genre WHERE genre_name=?)" +
+        "OR genre5=(SELECT genre_id FROM genre WHERE genre_name=?)) AND" +
+        "(all_series.series_id !=(SELECT series_id FROM ??));";
+    con.query(sql, [username, genre, genre, genre, genre, genre, username],function (err, result) {
+        if (err)
+            throw (err);
+        else{
+            console.log(result);
+
+            res.send(JSON.stringify(result));
+        }
+    });
+});
+
 
 module.exports = router;

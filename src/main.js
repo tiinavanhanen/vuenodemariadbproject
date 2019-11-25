@@ -12,6 +12,7 @@ import CreateComponent from './components/CreateComponent.vue';
 import IndexComponent from './components/IndexComponent.vue';
 import EditComponent from './components/EditComponent.vue';
 import CommentsComponent from './components/CommentsComponent.vue';
+import RecommendComponent from './components/RecommendComponent';
 
 const routes = [
   {
@@ -43,6 +44,11 @@ const routes = [
     name: 'addcomment',
     path: '/addcomments',
     component: CommentsComponent
+  },
+  {
+    name: 'recommend',
+    path: '/recommend',
+    component: RecommendComponent
   }
 ];
 

@@ -11,6 +11,7 @@
                     <th>Genre</th>
                     <th>Votes</th>
                     <th>Rating</th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -24,7 +25,9 @@
 
                 </tbody>
             </table>
-
+            <h2> Description</h2>
+            <p>{{ info }}</p>
+            <img id="poster"/>
         </div>
     </div>
 </template>
@@ -43,7 +46,8 @@
         data() {
             return {
                 show: [],
-
+                info: '',
+                image: ''
             }
         },
         methods: {
@@ -58,21 +62,34 @@
                 axios
                     .get(uri)
                     .then(responce => {
-                        this.isLoading = false;
-                        /* eslint-disable no-console */
                         console.log("got a result");
                         console.log(responce);
                         this.show = responce.data;
                         console.log(this.show);
                         console.log(JSON.stringify(this.show));
-
+                        this.getDescription();
                     })
                     .catch(err => {
-                        //this.msg = err.message;
-                        /* eslint-disable no-console */
                         console.log(err);
-                        /* eslint-enable no-console */
                     });
+            },
+
+            getDescription() {
+                var name = this.series_name;
+                var uri = "https://api.themoviedb.org/3/search/tv?api_key=7d23aafdf005feaeec6939b430e5e4e4&language=en-US&query=" + name + "&page=1";
+                axios
+                    .get(uri)
+                    .then(responce => {
+                        console.log(responce);
+                        var resultShow = responce.data.results[0];
+                        this.info = resultShow.overview;
+                        var poster = document.getElementById("poster");
+                        poster.src="https://image.tmdb.org/t/p/w500" + resultShow.poster_path;
+                        console.log(this.info);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
             }
         },
 

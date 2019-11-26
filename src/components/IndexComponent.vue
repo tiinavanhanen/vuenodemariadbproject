@@ -62,7 +62,7 @@
 
             loadShows() {
                 axios
-                    .get( "http://localhost:3000/api/all_shows")
+                    .get( "http://localhost:8080/api/all_shows")
                     .then( responce => {
                         this.isLoading = false;
                         /* eslint-disable no-console */

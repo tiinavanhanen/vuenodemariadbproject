@@ -4,6 +4,7 @@ const mysql = require('mysql');
 const config = require('../db/db_config.js');
 const db = config.database;
 const url = require('url');
+const theMovieDb = require('../themoviedb/themoviedb');
 const con = mysql.createConnection({user: db.user, password: db.password, host: db.host, database: db.database});
 con.connect();
 
@@ -104,5 +105,152 @@ router.get("/show", function (req,res){
     });
 
 });
+router.get("/addseries", function (req, res) {
+    var q = url.parse(req.url, true).query;
+    var name = q.showname;
+    var user = q.username;
+    var genres = [];
+    theMovieDb.search.getTv({"query": name}, showSeries, showError);
+    function showSeries(data) {
+        console.log(data);
+        data = JSON.parse(data);
+        var dbgenreids = data.results[0].genre_ids;
+        console.log("dbgenreids: " + dbgenreids);
+        theMovieDb.genres.getTvList({}, showGenres, showError);
+        function showGenres(data) {
+            console.log(data);
+            data = JSON.parse(data);
+            var genrelist = data.genres;
+            for (var i = 0;i<dbgenreids.length;i++) {
+                for (var j = 0; j < genrelist.length; j++) {
+                    if (dbgenreids[i] === genrelist[j].id) {
+                        console.log(genrelist[j].name);
+                        genres[i] = genrelist[j].name;
+                    }
+                }
+            }
+            console.log("genres: " + genres);
+        }
+    }
+    function showError() {
+        console.log("Tapahtui virhe");
+    }
+    var seriesID = getSeriesId(name, genres);
+    console.log("seriesID: " + seriesID);
+    var sql = "INSERT INTO ?? (series_id) VALUES (?)";
+    con.query(sql, [user, seriesID], function (err, result) {
+        if (err) {
+            throw err;
+        } else {
+            res.end(JSON.stringify(result));
+        }
+    });
+});
+
+function getSeriesId(name, genres) {
+    var seriesID = -1;
+    var sql = "SELECT series_id FROM all_series WHERE series_name=?";
+    con.query(sql, [name], function (err, result) {
+        if (result) {
+            if (result.length > 0) {
+                seriesID = result[0].series_id;
+            } else {
+                var genreIDs = getGenres(genres);
+                console.log("genreIDs: " + genreIDs);
+                var sql2 = "";
+                if (genreIDs.length === 1) {
+                    sql2 = "INSERT INTO all_series (series_name, genre1) VALUES (?,?)";
+                    con.query(sql2, [name, genreIDs[0]], function(err, result) {
+                        seriesID = result.insertId;
+                    });
+                } else if (genreIDs.length === 2) {
+                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2) VALUES (?,?,?)";
+                    con.query(sql2, [name, genreIDs[0], genreIDs[1]], function(err, result) {
+                        seriesID = result.insertId;
+                    });
+                } else if (genreIDs.length === 3) {
+                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3) VALUES (?,?,?,?)";
+                    con.query(sql2, [name, genreIDs[0], genreIDs[1], genreIDs[2]], function(err, result) {
+                        seriesID = result.insertId;
+                    });
+                } else if (genreIDs.length === 4) {
+                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3, genre4) VALUES (?,?,?,?,?)";
+                    con.query(sql2, [name, genreIDs[0], genreIDs[1], genreIDs[2], genreIDs[3]], function(err, result) {
+                        seriesID = result.insertId;
+                    });
+                } else if (genreIDs.length === 5) {
+                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3, genre4, genre5) VALUES (?,?,?,?,?,?)";
+                    con.query(sql2, [name, genreIDs[0], genreIDs[1], genreIDs[2], genreIDs[3], genreIDs[4]], function(err, result) {
+                        seriesID = result.insertId;
+                    });
+                }
+            }
+        } else {
+            throw err;
+        }
+    });
+    console.log("funktiossa: " + seriesID);
+    return seriesID;
+}
+
+function getGenres(genres) {
+    var genreids = [];
+    var sql = "";
+    if (genres.length === 1) {
+        sql = "SELECT genre_id FROM genre WHERE genre_name=?";
+        con.query(sql, [genres[0]], function (err, result) {
+            if (err) {
+                throw err;
+            } else {
+                genreids[0] = result[0];
+            }
+        });
+    } else if (genres.length === 2) {
+        sql = "SELECT genre_id FROM genre WHERE genre_name=? OR genre_name=?";
+        con.query(sql, [genres[0], genres[1]], function (err, result) {
+            if (err) {
+                throw err;
+            } else {
+                for (var i=0;i<result.length;i++) {
+                    genreids[i] = result[i];
+                }
+            }
+        });
+    } else if (genres.length === 3) {
+        sql = "SELECT genre_id FROM genre WHERE genre_name=? OR genre_name=? OR genre_name=?";
+        con.query(sql, [genres[0], genres[1], genres[2]], function (err, result) {
+            if (err) {
+                throw err;
+            } else {
+                for (var i=0;i<result.length;i++) {
+                    genreids[i] = result[i];
+                }
+            }
+        });
+    } else if (genres.length === 4) {
+        sql = "SELECT genre_id FROM genre WHERE genre_name=? OR genre_name=? OR genre_name=? OR genre_name=?";
+        con.query(sql, [genres[0], genres[1], genres[2], genres[3]], function (err, result) {
+            if (err) {
+                throw err;
+            } else {
+                for (var i=0;i<result.length;i++) {
+                    genreids[i] = result[i];
+                }
+            }
+        });
+    } else if (genres.length === 5) {
+        sql = "SELECT genre_id FROM genre WHERE genre_name=? OR genre_name=? OR genre_name=? OR genre_name=? OR genre_name=?";
+        con.query(sql, [genres[0], genres[1], genres[2], genres[3], genres[4]], function (err, result) {
+            if (err) {
+                throw err;
+            } else {
+                for (var i=0;i<result.length;i++) {
+                    genreids[i] = result[i];
+                }
+            }
+        });
+    }
+    return genreids;
+}
 
 module.exports = router;

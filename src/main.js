@@ -13,6 +13,7 @@ import IndexComponent from './components/IndexComponent.vue';
 import EditComponent from './components/EditComponent.vue';
 import CommentsComponent from './components/CommentsComponent.vue';
 import RecommendComponent from './components/RecommendComponent';
+import ShowComponent from './components/ShowComponent';
 
 const routes = [
   {
@@ -49,6 +50,12 @@ const routes = [
     name: 'recommend',
     path: '/recommend',
     component: RecommendComponent
+  },
+  {
+    name: 'show',
+    path: '/show/',
+    props: true,
+    component: ShowComponent
   }
 ];
 

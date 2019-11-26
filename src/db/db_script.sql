@@ -134,3 +134,19 @@ OR genre3=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre4=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama')) AND
 (all_series.series_id !=(SELECT series_id FROM testuser));
+
+--showing name, genres, votes and rating for all shows
+SELECT s.series_name, g1.genre_name AS genre_name1, g2.genre_name AS genre_name2, g3.genre_name AS genre_name3, s.votes, (s.score/s.votes) AS rating FROM all_series AS s
+LEFT JOIN genre AS g1 ON s.genre1=g1.genre_id
+LEFT JOIN genre AS g2 ON s.genre2=g2.genre_id
+LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id
+LEFT JOIN genre AS g4 ON s.genre4=g4.genre_id;
+
+--showing name, genres, votes and rating for one show
+SELECT s.series_name, g1.genre_name AS genre_name1, g2.genre_name AS genre_name2, g3.genre_name AS genre_name3, s.votes, (s.score/s.votes) AS rating
+FROM all_series AS s
+LEFT JOIN genre AS g1 ON s.genre1=g1.genre_id
+LEFT JOIN genre AS g2 ON s.genre2=g2.genre_id
+LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id
+LEFT JOIN genre AS g4 ON s.genre4=g4.genre_id
+WHERE s.series_name="ncis";

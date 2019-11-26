@@ -13,11 +13,15 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr v-for="show in shows" :key="show.id" >
+
+                <tr v-for="show in shows" :key="show.series_name" >
+                    <router-link :to="{name: 'show', params: {series_name: show.series_name}}">
                     <td>{{ show.series_name }} </td>
                     <td>{{ show.votes }} </td>
                     <td>{{ show.rating }}</td>
+                    </router-link>
                 </tr>
+
                 </tbody>
             </table>
             <p v-if="noShows">No shows yet!</p>
@@ -32,6 +36,7 @@
     export default {
 
         name: "app",
+        props:['key'],
         computed: {
             hasShows() {
                 return this.isLoading === false && this.shows.length > 0;

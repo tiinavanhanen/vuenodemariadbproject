@@ -86,7 +86,7 @@
                     "showname": this.show.name,
                     "comment": this.show.comment
                 };
-                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&comment=" + body.comment;
+                var uri = "http://localhost:8080/api/addcomment/?showname=" + body.showname + "&comment=" + body.comment;
                 axios
                     .get(uri)
                     .then( responce => {
@@ -102,7 +102,7 @@
                 const body = {
                     "showname": this.show.name
                 };
-                var uri = "http://localhost:3000/api/comments/?showname=" +body.showname;
+                var uri = "http://localhost:8080/api/comments/?showname=" +body.showname;
                 axios
                     .get(uri)
                     .then( responce => {

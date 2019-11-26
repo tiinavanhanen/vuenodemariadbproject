@@ -10,6 +10,7 @@
 
 <input id="searching" placeholder="write show's name">
 <button id="button2">get show-info</button>
+<div id="div"></div>
 <div id="results">
     <p id="name"></p>
     <p id="about"></p>
@@ -17,24 +18,44 @@
 </div>
 </body>
 <script>
+
+    var name= document.getElementById("name");
+    var about = document.getElementById("about");
+    var poster = document.getElementById("poster");
+    var div = document.getElementById("div");
+
     document.getElementById("button2").onclick = function () {
         var nimi = document.getElementById("searching").value;
         theMovieDb.search.getTv({"query": nimi}, show, showerror);
     };
 
-    function show(data) {
+    function showSeries(data) {
         console.log(data);
         data = JSON.parse(data);
-        var name= document.getElementById("name");
+        var genres = data.results[0].genre_ids;
         name.innerHTML=data.results[0].original_name;
-        var about = document.getElementById("about");
         about.innerHTML=data.results[0].overview;
-        var poster = document.getElementById("poster");
         poster.src = "https://image.tmdb.org/t/p/w500" + data.results[0].poster_path;
+
+        theMovieDb.genres.getTvList({}, showGenres, showerror);
+        function showGenres(data) {
+            console.log("genres: " + data);
+            data = JSON.parse(data);
+            var genrelist = data.genres;
+            for (var i = 0;i<genres.length;i++) {
+                for (var j = 0; j < genrelist.length; j++) {
+                    if (genres[i] === genrelist[j].id) {
+                        console.log(genrelist[j].name);
+                    }
+                }
+            }
+        }
     }
 
     function showerror(){
         console.log("virhe");
     }
+
+
 </script>
 </html>

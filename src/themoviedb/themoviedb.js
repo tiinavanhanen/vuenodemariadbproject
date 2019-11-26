@@ -17,7 +17,7 @@
 
 
 var theMovieDb = {};
-
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 
 theMovieDb.common = {

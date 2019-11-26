@@ -2,15 +2,14 @@ CREATE DATABASE seriesdb;
 USE seriesdb;
 
 CREATE TABLE genre (
-	genre_id INT NOT NULL AUTO_INCREMENT,
+	genre_id INT NOT NULL,
 	genre_name VARCHAR(50) NOT NULL,
 	PRIMARY KEY ( genre_id )
 	);
 
 --all genres, this table won't change
-INSERT INTO genre (genre_name) VALUES ('action & adventure'), ('animation'), ('comedy'), ('crime'), ('documentary'),
- ('drama'), ('family'), ('fantasy'), ('history'), ('horror'), ('music'), ('mystery'), ('romance'), ('science fiction'), ('thriller'),
- ('war'), ('soap'), ('talk'), ('western'), ('war & politics'), ('reality'), ('sci-fi & fantasy'), ('news'), ('kids'), ('action'), ('adventure'), ('war');
+INSERT INTO genre (genre_id, genre_name) VALUES ('10759','action & adventure'), ('16', 'animation'), ( '35','comedy'), ('80','crime'), ('99', 'documentary'),
+ ('18','drama'), ('10751','family'), ('10762', 'kids'), ('9648', 'mystery'), ('10766','soap'), ('10767', 'talk'), ('37','western'), ('10768','war & politics'), ('10764','reality'), ('10765','sci-fi & fantasy'), ('10763','news');
 
 CREATE TABLE all_series (
 	series_id INT NOT NULL AUTO_INCREMENT,

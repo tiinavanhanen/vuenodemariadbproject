@@ -6,7 +6,7 @@
           <router-link to="/" class="nav-link">Home</router-link>
         </li>
         <li class="nav-item">
-          <router-link to="/create" class="nav-link">Add show</router-link>
+          <router-link to="/addseries" class="nav-link">Add series</router-link>
         </li>
         <li class="nav-item">
           <router-link to="/posts" class="nav-link">All shows</router-link>

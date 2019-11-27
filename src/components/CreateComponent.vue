@@ -3,11 +3,17 @@
         <div class="col-md-8">
             <h1>Add a show</h1>
             <form @submit.prevent="addSeries">
-                <label>Show name</label>
-                <input type="text" v-model="show.name"/>
-                <button>Add show</button>
+                <label>Series name</label>
+                <input type="text" v-model="series.name"/>
+                <button>Add series</button>
                 <p v-if="success" class="success-message">
                     ✅ Series successfully added
+                </p>
+                <p v-if="check" class="error-message">
+                    ❗Series is already on your list
+                </p>
+                <p v-if="error" class="error-message">
+                    ❗An error has occurred
                 </p>
             </form>
         </div>
@@ -21,7 +27,9 @@
         data() {
             return {
                 success: false,
-                show: {
+                error: false,
+                check: false,
+                series: {
                     name: ''
                 }
             }
@@ -29,16 +37,28 @@
         methods: {
             addSeries() {
                 const body = {
-                    "showname": this.show.name
+                    "showname": this.series.name
                 };
-                var uri = "http://localhost:8080/api/addseries/?showname=" + body.showname + "&username=" + "testuser";
+                var uri = "http://localhost:3000/api/addseries/?showname=" + body.showname + "&username=" + "testuser";
                 axios
                     .get(uri)
                     .then(response => {
-                        this.success = true;
                         // eslint-disable-next-line no-console
                         console.log(response);
-                        this.success = false;
+                        if (response.data === "on jo") {
+                            this.check = true;
+                            this.success = false;
+                            this.error = false;
+
+                        } else if (response.data === "ei ole") {
+                            this.success = true;
+                            this.check = false;
+                            this.error = false;
+                        } else {
+                            this.error = true;
+                            this.check = false;
+                            this.success = false;
+                        }
                     });
             },
         }
@@ -48,5 +68,8 @@
 <style scoped>
     .success-message {
         color: #32a95d;
+    }
+    .error-message {
+        color: #d33c40;
     }
 </style>

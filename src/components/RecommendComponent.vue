@@ -64,7 +64,7 @@
                 const body = {
                     "genre": this.show.genre,
                 };
-                var uri = "http://localhost:8080/api/recommend/?username=" + "testuser" + "&genre=" + body.genre;
+                var uri = "http://localhost:3000/api/recommend/?username=" + "testuser" + "&genre=" + body.genre;
                 axios
                     .get(uri)
                     .then( responce => {

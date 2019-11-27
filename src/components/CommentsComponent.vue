@@ -96,7 +96,7 @@
 
                         handleCommentSubmit(){
                             const body = {
-                                "showname": this.show.name,
+                                "showname": this.selected.label,
                                 "comment": this.show.comment
                             };
                             var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&comment=" + body.comment;

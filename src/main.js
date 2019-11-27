@@ -25,8 +25,8 @@ const routes = [
     component: HomeComponent
   },
   {
-    name: 'create',
-    path: '/create',
+    name: 'add',
+    path: '/addseries',
     component: CreateComponent
   },
   {

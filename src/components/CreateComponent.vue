@@ -31,7 +31,7 @@
                 const body = {
                     "showname": this.show.name
                 };
-                var uri = "http://localhost:8080/api/addseries/?showname=" + body.showname + "&username=" + "testuser";
+                var uri = "http://localhost:3000/api/addseries/?showname=" + body.showname + "&username=" + "testuser";
                 axios
                     .get(uri)
                     .then(response => {

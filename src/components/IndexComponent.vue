@@ -15,11 +15,11 @@
                 <tbody>
 
                 <tr v-for="show in shows" :key="show.series_name" >
-                    <router-link :to="{name: 'show', params: {series_name: show.series_name}}">
-                    <td>{{ show.series_name }} </td>
+
+                    <td><router-link :to="{name: 'show', params: {series_name: show.series_name}}">{{ show.series_name }}</router-link> </td>
                     <td>{{ show.votes }} </td>
                     <td>{{ show.rating }}</td>
-                    </router-link>
+
                 </tr>
 
                 </tbody>
@@ -62,7 +62,7 @@
 
             loadShows() {
                 axios
-                    .get( "http://localhost:8080/api/all_shows")
+                    .get( "http://localhost:3000/api/all_shows")
                     .then( responce => {
                         this.isLoading = false;
                         /* eslint-disable no-console */

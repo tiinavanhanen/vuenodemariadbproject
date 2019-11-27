@@ -5,6 +5,9 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
+import vSelect from 'vue-select';
+Vue.component('v-select', vSelect);
+
 Vue.config.productionTip = false;
 
 import HomeComponent from './components/HomeComponent.vue';
@@ -24,6 +27,11 @@ const routes = [
   {
     name: 'create',
     path: '/create',
+    component: CreateComponent
+  },
+  {
+    name: 'addseries',
+    path: '/addseries',
     component: CreateComponent
   },
   {
@@ -53,7 +61,7 @@ const routes = [
   },
   {
     name: 'show',
-    path: '/show/',
+    path: '/show',
     props: true,
     component: ShowComponent
   }

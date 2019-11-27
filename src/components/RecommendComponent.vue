@@ -49,7 +49,6 @@
             return {
                 show: {
                     genre: '',
-
                 },
                 shows: [],
                 isLoading: true,

@@ -2,124 +2,165 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1>Comments</h1>
-
             <form @submit.prevent="handleSubmit">
-                <label>Show's name</label>
-                <input
-                        type="text"
-                        v-model="show.name"
-                />
+                <v-select v-model="selected" :options="options" placeholder="Choose a show">
+                    <template slot="option" slot-scope="option">{{option.label}}
+                    </template></v-select>
                 <button>Display comments</button>
             </form>
-            <form @submit.prevent="handleCommentSubmit" id="addComment" style="display: none">
-                <label>Add comment</label>
-                <input
-                        type="text"
-                        v-model="show.comment"
-                />
-                <button>Add</button>
-            </form>
-            <table class="table table-striped" v-if="hasComments">
+            <!--
+                        <form @submit.prevent="handleSubmit">
+                            <label>Show's name</label>
+                            <input
+                                    type="text"
+                                    v-model="show.name"
+                            />
+                            <button>Display comments</button>
+                        </form> -->
+                        <form @submit.prevent="handleCommentSubmit" id="addComment" style="display: none">
+                            <label>Add comment</label>
+                            <input
+                                    type="text"
+                                    v-model="show.comment"
+                            />
+                            <button>Add</button>
+                        </form>
+                        <table class="table table-striped" v-if="hasComments">
 
-                <thead>
-                <tr>
-                    <th>Comment</th>
-                    <th>User</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="comment in comments" :key="comment.id" >
-                    <td>{{ comment.comment }} </td>
-                    <td>{{ comment.username }} </td>
-                </tr>
-                </tbody>
-            </table>
-            <p v-if="noComments">No comments yet!</p>
+                            <thead>
+                            <tr>
+                                <th>Comment</th>
+                                <th>User</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="comment in comments" :key="comment.id" >
+                                <td>{{ comment.comment }} </td>
+                                <td>{{ comment.username }} </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <p v-if="noComments">No comments yet!</p>
 
-        </div>
-    </div>
+                    </div>
+                </div>
 
-</template>
+            </template>
 
-<script>
-    const axios = require('axios');
-    export default {
+            <script>
+                const axios = require('axios');
+                export default {
 
-        name: "app",
-        computed: {
-            hasComments() {
-                return this.isLoading === false && this.comments.length > 0;
-            },
-            noComments() {
-                return this.isLoading === false && this.comments.length === 0;
-            }
-        },
-        data() {
-            return {
-                comment: {
-                    comment: '',
-                    username: '',
-                },
-                comments: [],
-                show: {
-                    name: '',
-                    comment:''
-                },
-                isLoading: true,
-            }
-        },
+                    name: "app",
+                    computed: {
+                        hasComments() {
+                            return this.isLoading === false && this.comments.length > 0;
+                        },
+                        noComments() {
+                            return this.isLoading === false && this.comments.length === 0;
+                        }
+                    },
+                    data() {
+                        return {
+                            comment: {
+                                comment: '',
+                                username: '',
+                            },
+                            comments: [],
+                            show: {
+                                name: '',
+                                comment:''
+                            },
+                            options: [],
+                            option: {
+                               value: '', label: ''
+                            },
+                            shows: [],
+                            selected: null,
+                            isLoading: true,
+                        }
+                    },
 
 
-        methods:{
+                    methods:{
 
-            handleSubmit() {
+                        handleSubmit() {
 
-                /* eslint-disable no-console */
-                console.log( this.show.name);
-                /* eslint-enable no-console */
-                this.loadShows(this.show.name);
-                document.getElementById("addComment").style="display: initial"
-            },
+                            /* eslint-disable no-console */
+                            console.log( this.show.name);
+                            /* eslint-enable no-console */
+                            //this.loadComments(this.show.name);
+                            this.loadComments(this.selected.label);
+                            document.getElementById("addComment").style="display: initial"
+                        },
 
-            handleCommentSubmit(){
-                const body = {
-                    "showname": this.show.name,
-                    "comment": this.show.comment
-                };
-                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&comment=" + body.comment;
-                axios
-                    .get(uri)
-                    .then( responce => {
-                        /* eslint-disable no-console */
-                        console.log( "got a comment result");
-                        console.log(responce);
-                        this.loadShows();
+                        handleCommentSubmit(){
+                            const body = {
+                                "showname": this.show.name,
+                                "comment": this.show.comment
+                            };
+                            var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&comment=" + body.comment;
+                            axios
+                                .get(uri)
+                                .then( responce => {
+                                    /* eslint-disable no-console */
+                                    console.log( "got a comment result");
+                                    console.log(responce);
+                                    this.loadComments();
 
-                    });
-            },
+                                });
+                        },
 
-            loadShows() {
-                const body = {
-                    "showname": this.show.name
-                };
-                var uri = "http://localhost:3000/api/comments/?showname=" +body.showname;
-                axios
-                    .get(uri)
-                    .then( responce => {
-                        this.isLoading = false;
-                        /* eslint-disable no-console */
-                        console.log( "got a result");
-                        console.log(responce);
-                        this.comments = responce.data;
-                        console.log(JSON.stringify(this.comments));
-                    } )
-                    .catch( err => {
-                        //this.msg = err.message;
-                        /* eslint-disable no-console */
-                        console.log( err );
-                        /* eslint-enable no-console */
-                    } );
-            }
-        },
-    }
-</script>
+                        loadComments() {
+                            const body = {
+                                //"showname": this.show.name,
+                                "showname": this.selected.label
+                            };
+                            var uri = "http://localhost:3000/api/comments/?showname=" +body.showname;
+                            axios
+                                .get(uri)
+                                .then( responce => {
+                                    this.isLoading = false;
+                                    /* eslint-disable no-console */
+                                    console.log( "got a result");
+                                    console.log(responce);
+                                    this.comments = responce.data;
+                                    console.log(JSON.stringify(this.comments));
+                                } )
+                                .catch( err => {
+                                    //this.msg = err.message;
+                                    /* eslint-disable no-console */
+                                    console.log( err );
+                                    /* eslint-enable no-console */
+                                } );
+                        },
+
+                        getShowNames(){
+                            var uri="http://localhost:3000/api/all_shows";
+                            axios
+                                .get(uri)
+                                .then(responce =>{
+                                    this.shows=responce.data;
+                                    /* eslint-disable no-console */
+                                    console.log( this.shows );
+                                    /* eslint-enable no-console */
+                                    for(var i=0; i<this.shows.length; i++){
+                                        this.option.value = i;
+                                        this.option.label = this.shows[i].series_name;
+                                        this.options.push(this.option);
+                                        this.option = {value: '', label: ''}
+                                    }
+
+                                })
+                                .catch(err => {
+                                    /* eslint-disable no-console */
+                                    console.log( err );
+                                    /* eslint-enable no-console */
+                                })
+                        }
+                    },
+                    mounted() {
+                       this.getShowNames();
+                    }
+                }
+            </script>

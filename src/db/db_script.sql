@@ -149,3 +149,6 @@ LEFT JOIN genre AS g2 ON s.genre2=g2.genre_id
 LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id
 LEFT JOIN genre AS g4 ON s.genre4=g4.genre_id
 WHERE s.series_name="ncis";
+
+--checking if show is already in user's table
+SELECT series_id FROM testuser WHERE series_id=(SELECT series_id FROM all_series WHERE series_name="ncis");

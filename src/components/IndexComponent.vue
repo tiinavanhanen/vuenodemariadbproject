@@ -15,11 +15,11 @@
                 <tbody>
 
                 <tr v-for="show in shows" :key="show.series_name" >
-                    <router-link :to="{name: 'show', params: {series_name: show.series_name}}">
-                    <td>{{ show.series_name }} </td>
+
+                    <td><router-link :to="{name: 'show', params: {series_name: show.series_name}}">{{ show.series_name }}</router-link> </td>
                     <td>{{ show.votes }} </td>
                     <td>{{ show.rating }}</td>
-                    </router-link>
+
                 </tr>
 
                 </tbody>

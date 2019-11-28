@@ -76,10 +76,9 @@ INSERT INTO USERS (username, email, password) VALUES (('testuser3'), ('testuser3
 --adding series into the user's personal table
 INSERT INTO testuser (series_id, episode) VALUES ((SELECT series_id FROM all_series WHERE series_name='sherlok'), ('2'));
 
---displaying all series from a user's table. mode: series name, season, episode EI TOIMI
-SELECT series_name, season, episode FROM all_series, testuser  WHERE all_series.series_id=(SELECT series_id FROM testuser);
-
-
+--displaying all series from a user's table. mode: series name, season, episode
+SELECT s.series_name, u.season, u.episode FROM testuser AS u
+LEFT JOIN all_series AS s ON u.series_id=s.series_id;
 
 --updating show's data in user's table
 UPDATE testuser SET episode=3 WHERE series_id=(SELECT series_id FROM all_series WHERE series_name='sherlok');
@@ -139,20 +138,19 @@ OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama')) AND
 (all_series.series_id !=(SELECT series_id FROM testuser));
 
 SELECT series_name, votes, (score/votes) AS rating from all_series
-WHERE ((score/votes>2) AND ((genre2=80 OR genre1=80 OR genre3=80 OR genre4=80 OR genre5=80)
-AND (all_series.series_id !=(SELECT series_id FROM testuser))));
+WHERE (score/votes>2)
+AND (genre2=80 OR genre1=80 OR genre3=80 OR genre4=80 OR genre5=80)
+AND (SELECT series_id FROM testuser)!= all_series.series_id;
 
-SELECT series_name, votes, (score/votes) AS rating from all_series, testuser WHERE
-(genre2=(SELECT genre_id FROM genre WHERE genre_name='drama')
-OR genre1=(SELECT genre_id FROM genre WHERE genre_name='drama')
-OR genre3=(SELECT genre_id FROM genre WHERE genre_name='drama')
-OR genre4=(SELECT genre_id FROM genre WHERE genre_name='drama')
-OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama')) AND
-all_series.series_id !=(SELECT series_id FROM testuser)
-AND score/votes>2;
+select series_name from all_series, testuser where all_series.series_id!=testuser.series_id;
 
-SELECT series_name, votes, (score/votes) AS rating from all_series  WHERE
-(score/votes>3) AND
+SELECT a.series_name, a.votes, (a.score/a.votes) AS rating from all_series as a
+WHERE (a.score/a.votes>2)
+left join testuser as t
+on a.series_id=t.series_id;
+
+SELECT series_name, votes, (score/votes) AS rating from all_series
+WHERE (score/votes>3) AND
 (genre2=(SELECT genre_id FROM genre WHERE genre_name='crime')
 OR genre1=(SELECT genre_id FROM genre WHERE genre_name='crime')
 OR genre3=(SELECT genre_id FROM genre WHERE genre_name='crime')
@@ -176,5 +174,20 @@ LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id
 LEFT JOIN genre AS g4 ON s.genre4=g4.genre_id
 WHERE s.series_name="ncis";
 
+
+
+
 --checking if show is already in user's table
 SELECT series_id FROM testuser WHERE series_id=(SELECT series_id FROM all_series WHERE series_name="ncis");
+
+--display show with partivular rating and genre
+SELECT series_name, votes, (score/votes) AS rating from all_series WHERE
+(genre2=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre1=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre3=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre4=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama'))
+AND score/votes>2;
+
+SELECT series_name, votes, (score/votes) AS rating from all_series
+WHERE (score/votes>2) AND (genre2=80 OR genre1=80 OR genre3=80 OR genre4=80 OR genre5=80);

@@ -9,7 +9,9 @@ CREATE TABLE genre (
 
 --all genres, this table won't change
 INSERT INTO genre (genre_id, genre_name) VALUES ('10759','action & adventure'), ('16', 'animation'), ( '35','comedy'), ('80','crime'), ('99', 'documentary'),
- ('18','drama'), ('10751','family'), ('10762', 'kids'), ('9648', 'mystery'), ('10766','soap'), ('10767', 'talk'), ('37','western'), ('10768','war & politics'), ('10764','reality'), ('10765','sci-fi & fantasy'), ('10763','news');
+ ('18','drama'), ('10751','family'), ('10762', 'kids'), ('9648', 'mystery'), ('10766','soap'), ('10767', 'talk'), ('37','western'), ('10768','war & politics'),
+ ('10764','reality'), ('10765','sci-fi & fantasy'), ('10763','news'), ('28', 'action'), ('12', 'adventure'), ('14', 'fantasy'), ('36', 'history'), ('27', 'horror'),
+ ('10402', 'music'), ('10749', 'romance'), ('878', 'science fiction'), ('10770', 'TV movie'), ('53', 'thriller'), ('10752', 'war');
 
 CREATE TABLE all_series (
 	series_id INT NOT NULL AUTO_INCREMENT,
@@ -74,8 +76,10 @@ INSERT INTO USERS (username, email, password) VALUES (('testuser3'), ('testuser3
 --adding series into the user's personal table
 INSERT INTO testuser (series_id, episode) VALUES ((SELECT series_id FROM all_series WHERE series_name='sherlok'), ('2'));
 
---displaying all series from a user's table. mode: series name, season, episode
+--displaying all series from a user's table. mode: series name, season, episode EI TOIMI
 SELECT series_name, season, episode FROM all_series, testuser  WHERE all_series.series_id=(SELECT series_id FROM testuser);
+
+
 
 --updating show's data in user's table
 UPDATE testuser SET episode=3 WHERE series_id=(SELECT series_id FROM all_series WHERE series_name='sherlok');
@@ -132,6 +136,28 @@ OR genre1=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre3=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre4=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama')) AND
+(all_series.series_id !=(SELECT series_id FROM testuser));
+
+SELECT series_name, votes, (score/votes) AS rating from all_series
+WHERE ((score/votes>2) AND ((genre2=80 OR genre1=80 OR genre3=80 OR genre4=80 OR genre5=80)
+AND (all_series.series_id !=(SELECT series_id FROM testuser))));
+
+SELECT series_name, votes, (score/votes) AS rating from all_series, testuser WHERE
+(genre2=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre1=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre3=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre4=(SELECT genre_id FROM genre WHERE genre_name='drama')
+OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama')) AND
+all_series.series_id !=(SELECT series_id FROM testuser)
+AND score/votes>2;
+
+SELECT series_name, votes, (score/votes) AS rating from all_series  WHERE
+(score/votes>3) AND
+(genre2=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre1=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre3=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre4=(SELECT genre_id FROM genre WHERE genre_name='crime')
+OR genre5=(SELECT genre_id FROM genre WHERE genre_name='crime')) AND
 (all_series.series_id !=(SELECT series_id FROM testuser));
 
 --showing name, genres, votes and rating for all shows

@@ -200,4 +200,33 @@ router.get("/addseries", function (req, res) {
     }
 });
 
+router.get("/ownseries", function (req, res) {
+    console.log("own series");
+    var q = url.parse(req.url, true).query;
+    var user = q.username;
+    var sql = "SELECT s.series_name, u.season, u.episode FROM ?? AS u LEFT JOIN all_series AS s ON u.series_id=s.series_id";
+    con.query(sql, [user], function (err, result) {
+        if (err) throw err;
+        console.log("tiedot haettu: " + result);
+        res.end(JSON.stringify(result));
+    });
+
+});
+
+router.get("/editseries", function (req, res) {
+    console.log("edit series");
+    var q = url.parse(req.url, true).query;
+    var name = q.showname;
+    var user = q.username;
+    var episode = q.episode;
+    var season = q.season;
+
+    var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
+    con.query(sql, [user, season, episode, name], function (err, result) {
+        if (err) throw err;
+        console.log("päivitys onnistui");
+        res.end("sarja päivitetty");
+    });
+});
+
 module.exports = router;

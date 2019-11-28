@@ -111,111 +111,93 @@ router.get("/addseries", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var user = q.username;
-    var genres = getGenreIds(name, function(response) {
-        return response;
-    });
-    console.log("genres ulkona: " + genres);
-    var seriesID = getSeriesId(name, genres, function (response) {
-        return response;
-    });
-    console.log("series id ulkona: " + seriesID);
+    var genres = [];
+    var seriesID = -1;
 
-    /*function checkSeries(user, name) {
-        var sql = "SELECT series_id FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?);";
-        con.query(sql, [user, name], function (err ,result) {
-            if (result) {
-                if (result.length > 0) {
-                    console.log("sarja on jo taulussa");
-                    res.end("on jo");
-                } else {
-                    console.log("sarjaa ei löytynyt taulusta");
-                    res.end("ei ole");
-                }
+    var sql = "SELECT series_id FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?);";
+    con.query(sql, [user, name], function (err ,result) {
+        if (result) {
+            if (result.length > 0) {
+                console.log("sarja on jo omassa taulussa");
+                res.end("on jo");
             } else {
-                throw err;
-            }
-        });
-    }
-     */
-
-    function getSeriesId(name, genres, callback) {
-        var seriesID = -1;
-        var sql = "SELECT series_id FROM all_series WHERE series_name=?";
-        con.query(sql, [name], function (err, result) {
-            if (result) {
-                if (result.length > 0) {
-                    seriesID = result[0].series_id;
-                    console.log("found series id: " + seriesID);
-                    res.end("series id löydetty");
-                } else {
-                    var sql2 = "";
-                    if (genres.length === 1) {
-                        sql2 = "INSERT INTO all_series (series_name, genre1) VALUES (?,?)";
-                        con.query(sql2, [name, genres[0]], function(err, result) {
-                            if (err) throw err;
-                            seriesID = result.insertId;
-                            console.log("1 genre series id: " + seriesID);
-                            callback(seriesID);
-                        });
-                    } else if (genres.length === 2) {
-                        sql2 = "INSERT INTO all_series (series_name, genre1, genre2) VALUES (?,?,?)";
-                        con.query(sql2, [name, genres[0], genres[1]], function(err, result) {
-                            if (err) throw err;
-                            seriesID = result.insertId;
-                            console.log("2 genre series id: " + seriesID);
-                            callback(seriesID);
-                        });
-                    } else if (genres.length === 3) {
-                        sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3) VALUES (?,?,?,?)";
-                        con.query(sql2, [name, genres[0], genres[1], genres[2]], function(err, result) {
-                            if (err) throw err;
-                            seriesID = result.insertId;
-                            console.log("3 genre series id: " + seriesID);
-                            callback(seriesID);
-                        });
-                    } else if (genres.length === 4) {
-                        sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3, genre4) VALUES (?,?,?,?,?)";
-                        con.query(sql2, [name, genres[0], genres[1], genres[2], genres[3]], function(err, result) {
-                            if (err) throw err;
-                            seriesID = result.insertId;
-                            console.log("4 genre series id: " + seriesID);
-                            res.end("series id luotu 4 genre");
-                            callback(seriesID);
-                        });
-                    } else if (genres.length === 5) {
-                        sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3, genre4, genre5) VALUES (?,?,?,?,?,?)";
-                        con.query(sql2, [name, genres[0], genres[1], genres[2], genres[3], genres[4]], function(err, result) {
-                            if (err) throw err;
-                            seriesID = result.insertId;
-                            console.log("5 genre series id: " + seriesID);
-                            res.end("series id luotu 5 genre");
-                            callback(seriesID);
-                        });
+                console.log("sarjaa ei löytynyt omassa taulusta");
+                var sql = "SELECT series_id FROM all_series WHERE series_name=?";
+                con.query(sql, [name], function (err, result) {
+                    if (result) {
+                        if (result.length > 0) {
+                            seriesID = result[0].series_id;
+                            console.log("found series id: " + seriesID);
+                            addSeries(user, seriesID);
+                        } else {
+                            theMovieDb.search.getTv({"query": name}, function showSeries(data) {
+                                console.log(data);
+                                data = JSON.parse(data);
+                                genres = data.results[0].genre_ids;
+                                console.log("genres: " + genres);
+                                var sql2 = "";
+                                if (genres.length === 1) {
+                                    sql2 = "INSERT INTO all_series (series_name, genre1) VALUES (?,?)";
+                                    con.query(sql2, [name, genres[0]], function(err, result) {
+                                        if (err) throw err;
+                                        seriesID = result.insertId;
+                                        console.log("1 genre series id: " + seriesID);
+                                        addSeries(user, seriesID);
+                                    });
+                                } else if (genres.length === 2) {
+                                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2) VALUES (?,?,?)";
+                                    con.query(sql2, [name, genres[0], genres[1]], function(err, result) {
+                                        if (err) throw err;
+                                        seriesID = result.insertId;
+                                        console.log("2 genre series id: " + seriesID);
+                                        addSeries(user, seriesID);
+                                    });
+                                } else if (genres.length === 3) {
+                                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3) VALUES (?,?,?,?)";
+                                    con.query(sql2, [name, genres[0], genres[1], genres[2]], function(err, result) {
+                                        if (err) throw err;
+                                        seriesID = result.insertId;
+                                        console.log("3 genre series id: " + seriesID);
+                                        addSeries(user, seriesID);
+                                    });
+                                } else if (genres.length === 4) {
+                                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3, genre4) VALUES (?,?,?,?,?)";
+                                    con.query(sql2, [name, genres[0], genres[1], genres[2], genres[3]], function(err, result) {
+                                        if (err) throw err;
+                                        seriesID = result.insertId;
+                                        console.log("4 genre series id: " + seriesID);
+                                        addSeries(user, seriesID);
+                                    });
+                                } else if (genres.length === 5) {
+                                    sql2 = "INSERT INTO all_series (series_name, genre1, genre2, genre3, genre4, genre5) VALUES (?,?,?,?,?,?)";
+                                    con.query(sql2, [name, genres[0], genres[1], genres[2], genres[3], genres[4]], function(err, result) {
+                                        if (err) throw err;
+                                        seriesID = result.insertId;
+                                        console.log("5 genre series id: " + seriesID);
+                                        addSeries(user, seriesID);
+                                    });
+                                }
+                            }, function showError() {
+                                console.log("Genre-haussa tapahtui virhe");
+                            });
+                        }
+                    } else {
+                        throw err;
                     }
-                }
-            } else {
-                throw err;
+                });
             }
+        } else {
+            throw err;
+        }
+    });
+    function addSeries(user, seriesID) {
+        var sql3 = "INSERT INTO ?? (series_id) VALUES (?)";
+        con.query(sql3, [user, seriesID], function (err, result) {
+            if (err) throw err;
+            console.log("lisätty tunnettu sarja");
+            res.end("sarja lisätty");
         });
     }
-
-
-
-    function getGenreIds(name, callback) {
-        theMovieDb.search.getTv({"query": name}, showSeries, showError);
-        function showSeries(data) {
-            console.log(data);
-            data = JSON.parse(data);
-            var genreIds = data.results[0].genre_ids;
-            console.log("genreIds sisällä: " + genreIds);
-            callback(genreIds);
-        }
-        function showError() {
-            console.log("Tapahtui virhe");
-        }
-    }
-
-
 });
 
 module.exports = router;

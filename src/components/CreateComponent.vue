@@ -50,7 +50,7 @@
                             this.success = false;
                             this.error = false;
 
-                        } else if (response.data === "ei ole") {
+                        } else if (response.data === "sarja lisätty") {
                             this.success = true;
                             this.check = false;
                             this.error = false;

@@ -216,7 +216,7 @@ router.get("/editseries", function (req, res) {
     var user = q.username;
     var episode = q.episode;
     var season = q.season;
-
+    console.log("apissa " + name + user + episode + season);
     var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, season, episode, name], function (err, result) {
         if (err) throw err;
@@ -243,7 +243,7 @@ router.get("/deleteseries", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var user = q.username;
-
+    console.log("apissa " + name + user);
     var sql="DELETE FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, name], function (err, result) {
         if (err) throw err;

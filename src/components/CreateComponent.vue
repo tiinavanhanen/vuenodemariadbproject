@@ -30,23 +30,23 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr :key="series.id" v-for="series in shows">
-                    <td>{{series.series_name}}</td>
-                    <td v-if="editing === series.id">
-                        <input type="number" v-model="series.season">
+                <tr :key="show.series_name" v-for="show in shows">
+                    <td>{{show.series_name}}</td>
+                    <td v-if="editing === show.series_name">
+                        <input type="number" v-model="show.season">
                     </td>
-                    <td v-else>{{series.season}}</td>
-                    <td v-if="editing === series.id">
-                        <input type="number" v-model="series.episode">
+                    <td v-else>{{show.season}}</td>
+                    <td v-if="editing === show.series_name">
+                        <input type="number" v-model="show.episode">
                     </td>
-                    <td v-else>{{series.episode}}</td>
-                    <td v-if="editing === series.id">
-                        <button @click="editSeries(series)">Save</button>
-                        <button class="muted-button" @click="cancelEdit(series)">Cancel</button>
+                    <td v-else>{{show.episode}}</td>
+                    <td v-if="editing === show.series_name">
+                        <button @click="editSeries(show)">Save</button>
+                        <button class="muted-button" @click="cancelEdit(show)">Cancel</button>
                     </td>
                     <td v-else>
-                        <button @click="editMode(series)">Edit</button>
-                        <button @click="deleteSeries">Delete</button>
+                        <button @click="editMode(show)">Edit</button>
+                        <button @click="deleteSeries(show)">Delete</button>
                     </td>
                 </tr>
                 </tbody>
@@ -65,6 +65,9 @@
                 error: false,
                 check: false,
                 series: {
+                    series_name: '',
+                },
+                show: {
                     series_name: '',
                     season: '',
                     episode: '',
@@ -116,21 +119,17 @@
                         this.shows = response.data;
                         // eslint-disable-next-line no-console
                         console.log(this.shows);
-                        // eslint-disable-next-line no-console
-                        console.log(JSON.stringify(this.shows));
                     });
             },
-            editSeries() {
+            editSeries(show) {
+                if (show.series_name === '' || show.season === '' || show.episode === '') return;
                 // eslint-disable-next-line no-console
-                console.log("editing series");
-                const body = {
-                    "showname": this.series.series_name,
-                    "season": this.series.season,
-                    "episode": this.series.episode,
-                };
+                console.log("editing series: " + JSON.stringify(show));
+                // eslint-disable-next-line no-console
+                console.log("komponentissa name, season, episode " + show.series_name + show.season + show.episode);
                 axios
-                    .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + body.showname + "&season=" + body.season
-                    + "&episode" + body.episode)
+                    .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
+                        "&season=" + show.season + "&episode=" + show.episode)
                     .then( response => {
                         // eslint-disable-next-line no-console
                         console.log(response);
@@ -138,13 +137,13 @@
                         this.loadShows();
                     });
             },
-            deleteSeries() {
-                const body = {
-                    "showname": this.series.series_name,
-                };
-
+            deleteSeries(show) {
+                // eslint-disable-next-line no-console
+                console.log("deleting series: " + JSON.stringify(show));
+                // eslint-disable-next-line no-console
+                console.log("komponentissa nimi " + show.series_name);
                 axios
-                    .get("http://localhost:3000/api/deleteseries/?username=" + "testuser" + "&showname=" + body.showname)
+                    .get("http://localhost:3000/api/deleteseries/?username=" + "testuser" + "&showname=" + show.series_name)
                     .then( response => {
                         // eslint-disable-next-line no-console
                         console.log(response);
@@ -153,7 +152,7 @@
             },
             editMode(series) {
                 this.cachedSeries = Object.assign({}, series);
-                this.editing = series.id;
+                this.editing = series.series_name;
                 // eslint-disable-next-line no-console
                 console.log("cached series: " + series);
             },
@@ -163,11 +162,6 @@
                 // eslint-disable-next-line no-console
                 console.log("retrieved from cache series: " + series);
             },
-            edit(series) {
-                if (series.series_name === '' || series.season === '' || series.episode === '') return;
-                this.editSeries();
-                this.editing = null;
-            }
         },
         computed: {
             invalidName() {

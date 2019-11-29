@@ -216,13 +216,26 @@ router.get("/editseries", function (req, res) {
     var user = q.username;
     var episode = q.episode;
     var season = q.season;
-    console.log("apissa " + name + user + episode + season);
+    var score = q.score;
+    console.log("apissa: " + name + user + season + episode + score);
     var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, season, episode, name], function (err, result) {
         if (err) throw err;
         console.log(JSON.stringify(result));
-        console.log("päivitys onnistui");
-        res.end("sarja päivitetty");
+        console.log("sarjan päivitys onnistui");
+        if (!isNaN(score)) {
+            score = parseFloat(score);
+            var sql2 = "UPDATE all_series SET score=score+?, votes=votes+1 WHERE series_name=?";
+            con.query(sql2, [score, name], function (err, result) {
+                if (err) throw err;
+                console.log(JSON.stringify(result));
+                console.log("arvostelun päivitys onnistui");
+                res.end("sarja ja arvostelu päivitetty");
+            });
+        } else {
+            score = 0;
+            res.end("sarja päivitetty");
+        }
     });
 });
 

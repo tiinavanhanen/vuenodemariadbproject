@@ -27,6 +27,7 @@
                     <th>Name</th>
                     <th>Season</th>
                     <th>Episode</th>
+                    <th v-if="editing === show.series_name">Rating</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -40,6 +41,10 @@
                         <input type="number" v-model="show.episode">
                     </td>
                     <td v-else>{{show.episode}}</td>
+                    <td v-if="editing === show.series_name">
+                        <v-select v-model="show.score" :options="options" placeholder="">
+                        </v-select>
+                    </td>
                     <td v-if="editing === show.series_name">
                         <button @click="editSeries(show)">Save</button>
                         <button class="muted-button" @click="cancelEdit(show)">Cancel</button>
@@ -71,8 +76,11 @@
                     series_name: '',
                     season: '',
                     episode: '',
+                    score: '',
+                    votes: '',
                 },
                 shows: [],
+                options: [1,2,3,4,5],
                 isLoading: true,
                 editing: null,
                 submitting: false,
@@ -126,22 +134,35 @@
                 // eslint-disable-next-line no-console
                 console.log("editing series: " + JSON.stringify(show));
                 // eslint-disable-next-line no-console
-                console.log("komponentissa name, season, episode " + show.series_name + show.season + show.episode);
-                axios
-                    .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
-                        "&season=" + show.season + "&episode=" + show.episode)
-                    .then( response => {
-                        // eslint-disable-next-line no-console
-                        console.log(response);
-                        this.editing = null;
-                        this.loadShows();
-                    });
+                console.log("komponentissa name, score " + show.series_name + show.score);
+                if (show.score === "") {
+                    axios
+                        .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
+                            "&season=" + show.season + "&episode=" + show.episode)
+                        .then( response => {
+                            // eslint-disable-next-line no-console
+                            console.log(response);
+                            this.editing = null;
+                            this.loadShows();
+                        });
+                } else {
+                    axios
+                        .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
+                            "&season=" + show.season + "&episode=" + show.episode + "&score=" + show.score)
+                        .then( response => {
+                            // eslint-disable-next-line no-console
+                            console.log(response);
+                            this.editing = null;
+                            this.loadShows();
+                        });
+                }
+
             },
             deleteSeries(show) {
                 // eslint-disable-next-line no-console
                 console.log("deleting series: " + JSON.stringify(show));
                 // eslint-disable-next-line no-console
-                console.log("komponentissa nimi " + show.series_name);
+                //console.log("komponentissa nimi " + show.series_name);
                 axios
                     .get("http://localhost:3000/api/deleteseries/?username=" + "testuser" + "&showname=" + show.series_name)
                     .then( response => {
@@ -154,13 +175,13 @@
                 this.cachedSeries = Object.assign({}, series);
                 this.editing = series.series_name;
                 // eslint-disable-next-line no-console
-                console.log("cached series: " + series);
+                console.log("cached series: " + JSON.stringify(series));
             },
             cancelEdit(series) {
                 Object.assign(series, this.cachedSeries);
                 this.editing = null;
                 // eslint-disable-next-line no-console
-                console.log("retrieved from cache series: " + series);
+                console.log("retrieved from cache series: " + JSON.stringify(series));
             },
         },
         computed: {

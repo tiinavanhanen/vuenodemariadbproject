@@ -88,7 +88,6 @@
                             this.options.push(this.option);
                             this.option = {value: '', label: ''}
                         }
-
                     })
                     .catch(err => {
                         console.log( err );

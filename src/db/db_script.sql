@@ -128,35 +128,18 @@ OR genre4=(SELECT genre_id FROM genre WHERE genre_name='crime')
 OR genre5=(SELECT genre_id FROM genre WHERE genre_name='crime'));
 
 --showing shows with a particular rating and genre that are not in a user's own table
-SELECT series_name, votes, (score/votes) AS rating from all_series, testuser  WHERE
+SELECT series_name, votes, (score/votes) AS rating from all_series  WHERE
 (score/votes>2) AND
 (genre2=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre1=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre3=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre4=(SELECT genre_id FROM genre WHERE genre_name='drama')
 OR genre5=(SELECT genre_id FROM genre WHERE genre_name='drama')) AND
-(all_series.series_id !=(SELECT series_id FROM testuser));
+all_series.series_id NOT IN (SELECT series_id FROM testuser);
 
-SELECT series_name, votes, (score/votes) AS rating from all_series
-WHERE (score/votes>2)
-AND (genre2=80 OR genre1=80 OR genre3=80 OR genre4=80 OR genre5=80)
-AND (SELECT series_id FROM testuser)!= all_series.series_id;
-
-select series_name from all_series, testuser where all_series.series_id!=testuser.series_id;
-
-SELECT a.series_name, a.votes, (a.score/a.votes) AS rating from all_series as a
-WHERE (a.score/a.votes>2)
-left join testuser as t
-on a.series_id=t.series_id;
-
-SELECT series_name, votes, (score/votes) AS rating from all_series
-WHERE (score/votes>3) AND
-(genre2=(SELECT genre_id FROM genre WHERE genre_name='crime')
-OR genre1=(SELECT genre_id FROM genre WHERE genre_name='crime')
-OR genre3=(SELECT genre_id FROM genre WHERE genre_name='crime')
-OR genre4=(SELECT genre_id FROM genre WHERE genre_name='crime')
-OR genre5=(SELECT genre_id FROM genre WHERE genre_name='crime')) AND
-(all_series.series_id !=(SELECT series_id FROM testuser));
+SELECT series_name, votes, (score/votes) AS rating from all_series  WHERE (score/votes>2) AND
+(genre2='18' OR genre1='18' OR genre3='18' OR genre4='18' OR genre5='18') AND
+all_series.series_id NOT IN (SELECT series_id FROM testuser);
 
 --showing name, genres, votes and rating for all shows
 SELECT s.series_name, g1.genre_name AS genre_name1, g2.genre_name AS genre_name2, g3.genre_name AS genre_name3, s.votes, (s.score/s.votes) AS rating FROM all_series AS s
@@ -174,9 +157,6 @@ LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id
 LEFT JOIN genre AS g4 ON s.genre4=g4.genre_id
 WHERE s.series_name="ncis";
 
-
-
-
 --checking if show is already in user's table
 SELECT series_id FROM testuser WHERE series_id=(SELECT series_id FROM all_series WHERE series_name="ncis");
 
@@ -191,3 +171,5 @@ AND score/votes>2;
 
 SELECT series_name, votes, (score/votes) AS rating from all_series
 WHERE (score/votes>2) AND (genre2=80 OR genre1=80 OR genre3=80 OR genre4=80 OR genre5=80);
+
+

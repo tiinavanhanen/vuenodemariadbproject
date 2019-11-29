@@ -35,6 +35,16 @@ const routes = [
     component: CreateComponent
   },
   {
+    name: 'editseries',
+    path: '/editseries',
+    component: CreateComponent
+  },
+  {
+    name: 'deleteseries',
+    path: '/deleteseries',
+    component: CreateComponent
+  },
+  {
     name: 'posts',
     path: '/posts',
     component: IndexComponent

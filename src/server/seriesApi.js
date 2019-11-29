@@ -92,7 +92,7 @@ router.get("/show", function (req,res){
     var q = url.parse(req.url, true).query;
     var showname = q.series_name;
     //var sql ="SELECT series_name, genre1, genre2, genre3, votes, (score/votes) AS rating FROM all_series WHERE series_name=?;"
-   // var sql = "SELECT series_name, genre_name, genre_name, genre_name, votes, (score/votes) AS rating FROM all_series, genre WHERE series_name=? AND (genre_id =(SELECT genre1 from all_series WHERE series_name=?) or (genre_id =(SELECT genre2 from all_series WHERE series_name=?) ) or (genre_id =(SELECT genre3 from all_series WHERE series_name=?) ));";
+    // var sql = "SELECT series_name, genre_name, genre_name, genre_name, votes, (score/votes) AS rating FROM all_series, genre WHERE series_name=? AND (genre_id =(SELECT genre1 from all_series WHERE series_name=?) or (genre_id =(SELECT genre2 from all_series WHERE series_name=?) ) or (genre_id =(SELECT genre3 from all_series WHERE series_name=?) ));";
     var sql="SELECT s.series_name, g1.genre_name as genre_name1, g2.genre_name as genre_name2, g3.genre_name as genre_name3, s.votes, (s.score/s.votes) AS rating FROM all_series AS s LEFT JOIN genre AS g1 ON s.genre1=g1.genre_id LEFT JOIN genre AS g2 ON s.genre2=g2.genre_id LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id LEFT JOIN genre AS g4 ON s.genre4=g4.genre_id WHERE s.series_name=?;" ;
     con.query(sql, [showname], function (err, result) {
         if (err)
@@ -207,7 +207,7 @@ router.get("/ownseries", function (req, res) {
     var sql = "SELECT s.series_name, u.season, u.episode FROM ?? AS u LEFT JOIN all_series AS s ON u.series_id=s.series_id";
     con.query(sql, [user], function (err, result) {
         if (err) throw err;
-        console.log("tiedot haettu: " + result);
+        console.log("tiedot haettu: " + JSON.stringify(result));
         res.end(JSON.stringify(result));
     });
 
@@ -224,8 +224,24 @@ router.get("/editseries", function (req, res) {
     var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, season, episode, name], function (err, result) {
         if (err) throw err;
+        console.log(JSON.stringify(result));
         console.log("päivitys onnistui");
         res.end("sarja päivitetty");
+    });
+});
+
+router.get("/deleteseries", function (req, res) {
+    console.log("delete series");
+    var q = url.parse(req.url, true).query;
+    var name = q.showname;
+    var user = q.username;
+
+    var sql="DELETE FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
+    con.query(sql, [user, name], function (err, result) {
+        if (err) throw err;
+        console.log(JSON.stringify(result));
+        console.log("poisto onnistui");
+        res.end("sarja poistettu");
     });
 });
 

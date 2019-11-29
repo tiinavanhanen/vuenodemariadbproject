@@ -30,26 +30,23 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr :key="series.series_name" v-for="series in shows">
+                <tr :key="series.id" v-for="series in shows">
+                    <td>{{series.series_name}}</td>
                     <td v-if="editing === series.id">
-                        <input type="text" v-model="series.series_name">
-                    </td>
-                    <td v-else>{{series.series_name}}</td>
-                    <td v-if="editing === series.id">
-                        <input type="text" v-model="series.season">
+                        <input type="number" v-model="series.season">
                     </td>
                     <td v-else>{{series.season}}</td>
                     <td v-if="editing === series.id">
-                        <input type="text" v-model="series.episode">
+                        <input type="number" v-model="series.episode">
                     </td>
                     <td v-else>{{series.episode}}</td>
                     <td v-if="editing === series.id">
-                        <button @click="editEmployee(employee)">Save</button>
-                        <button class="muted-button" @click="cancelEdit(employee)">Cancel</button>
+                        <button @click="editSeries(series)">Save</button>
+                        <button class="muted-button" @click="cancelEdit(series)">Cancel</button>
                     </td>
                     <td v-else>
-                        <button @click="editMode(employee)">Edit</button>
-                        <button @click="$emit('delete:employee', employee.id)">Delete</button>
+                        <button @click="editMode(series)">Edit</button>
+                        <button @click="deleteSeries">Delete</button>
                     </td>
                 </tr>
                 </tbody>
@@ -100,8 +97,8 @@
                             this.success = true;
                             this.check = false;
                             this.error = false;
-                            this.loadShows();
                             this.series.series_name = '';
+                            this.loadShows();
                         } else {
                             this.error = true;
                             this.check = false;
@@ -124,6 +121,8 @@
                     });
             },
             editSeries() {
+                // eslint-disable-next-line no-console
+                console.log("editing series");
                 const body = {
                     "showname": this.series.series_name,
                     "season": this.series.season,
@@ -135,15 +134,34 @@
                     .then( response => {
                         // eslint-disable-next-line no-console
                         console.log(response);
+                        this.editing = null;
+                        this.loadShows();
+                    });
+            },
+            deleteSeries() {
+                const body = {
+                    "showname": this.series.series_name,
+                };
+
+                axios
+                    .get("http://localhost:3000/api/deleteseries/?username=" + "testuser" + "&showname=" + body.showname)
+                    .then( response => {
+                        // eslint-disable-next-line no-console
+                        console.log(response);
+                        this.loadShows();
                     });
             },
             editMode(series) {
                 this.cachedSeries = Object.assign({}, series);
-                this.editing = series.id
+                this.editing = series.id;
+                // eslint-disable-next-line no-console
+                console.log("cached series: " + series);
             },
             cancelEdit(series) {
                 Object.assign(series, this.cachedSeries);
                 this.editing = null;
+                // eslint-disable-next-line no-console
+                console.log("retrieved from cache series: " + series);
             },
             edit(series) {
                 if (series.series_name === '' || series.season === '' || series.episode === '') return;

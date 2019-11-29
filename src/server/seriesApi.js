@@ -5,7 +5,7 @@ const config = require('../db/db_config.js');
 const db = config.database;
 const url = require('url');
 const theMovieDb = require('../themoviedb/themoviedb');
-const axios = require('axios');
+//const axios = require('axios');
 const con = mysql.createConnection({user: db.user, password: db.password, host: db.host, database: db.database});
 con.connect();
 
@@ -219,88 +219,21 @@ router.get("/editseries", function (req, res) {
     var season = q.season;
     var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, season, episode, name], function (err, result) {
+        console.log(result);
         if (err) throw err;
         console.log("päivitys onnistui");
         res.end("sarja päivitetty");
     });
 });
 
-router.get("/addshow", function (req, res){
-    console.log("add series");
-    var q = url.parse(req.url, true).query;
-    var name = q.showname;
-    var user = q.username;
-    var sql = "SELECT series_id FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?);";
-    con.query(sql, [user, name],function(err, result){
-        if(result){
-            console.log("check the users table " + result);
-            console.log(result);
-            if(result.length>0){
-                res.end("show already in the table");
-            }
-            else{
-                console.log("show not found in the users table");
-                var sql = "SELECT series_id FROM all_series WHERE series_name=?;";
-                con.query(sql, [name], function(err, result){
-                    console.log("checking the all_series table");
-                    if(result){
-                        if(result.length>0){
-                            var showID = result[0].series_id;
-                            console.log("found show id " + showID);
-                            var sql = "INSERT INTO ?? (series_id) VALUE (?)";
-                            con.query(sql, [user, showID], function (err, result){
-                                if(result){
-                                    console.log(result);
-                                }
-                                else {
-                                    throw err;
-                                }
-                            })
-                        }
-                        else {
-                            console.log("not found in all_series");
-                            var uri = "https://api.themoviedb.org/3/search/tv?api_key=7d23aafdf005feaeec6939b430e5e4e4&language=en-US&query=" + name + "&page=1";
-                            axios
-                                .get(uri)
-                                .then(responce => {
-                                    console.log(responce);
-                                    var resultShow = responce.data.results[0];
-                                    var genre1 = resultShow.genre_ids[0];
-                                    console.log("got genre id   " + genre1);
-                                    //var sql2 ="INSERT INTO all_series (series_name, genre1) VALUE (?, (SELECT genre_id FROM genre WHERE genre_name='crime'));";
-                                    var sql2 ="INSERT INTO all_series (series_name, genre1) VALUE (?, ?);";
-                                    con.query(sql2, [name, genre1], function(err, result){
-                                        if(result){
-                                            console.log("added into all_series, genre " + genre1);
-                                            var sql = "INSERT INTO ?? (series_id) VALUE ((SELECT series_id FROM all_series WHERE series_name=?))";
-                                            con.query(sql, [user, name], function (err, result){
-                                                if(result){
-                                                    console.log(result);
-                                                    console.log("added to user table");
-                                                }
-                                                else {
-                                                    throw err;
-                                                }
-                                            })
-                                        }
-                                        else {
-                                            throw err;
-                                        }
-                                    })
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                });
-                        }
-                    }
-                    else {
-                        throw err;
-                    }
-                })
-            }
-        }
+router.get("/genres", function (req, res){
+    console.log("get all genres");
+    var sql = "SELECT * from genre;";
+    con.query(sql, function(err, result){
+        if(err)
+            throw (err);
         else {
-            throw err;
+            res.send(JSON.stringify(result));
         }
     })
 });

@@ -2,9 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1>All shows</h1>
-
             <table class="table table-striped" v-if="hasShows">
-
                 <thead>
                 <tr>
                     <th>Name</th>
@@ -13,28 +11,21 @@
                 </tr>
                 </thead>
                 <tbody>
-
                 <tr v-for="show in shows" :key="show.series_name" >
-
                     <td><router-link :to="{name: 'show', params: {series_name: show.series_name}}">{{ show.series_name }}</router-link> </td>
                     <td>{{ show.votes }} </td>
                     <td>{{ show.rating }}</td>
-
                 </tr>
-
                 </tbody>
             </table>
             <p v-if="noShows">No shows yet!</p>
-
         </div>
     </div>
-
 </template>
 
 <script>
     const axios = require('axios');
     export default {
-
         name: "app",
         props:['key'],
         computed: {
@@ -57,9 +48,7 @@
             }
         },
 
-
         methods:{
-
             loadShows() {
                 axios
                     .get( "http://localhost:3000/api/all_shows")
@@ -67,16 +56,11 @@
                         this.isLoading = false;
                         /* eslint-disable no-console */
                         console.log( "got a result");
-                        console.log(responce);
                         this.shows = responce.data;
-                        console.log(this.shows);
                         console.log(JSON.stringify(this.shows));
                     } )
                     .catch( err => {
-                        //this.msg = err.message;
-                        /* eslint-disable no-console */
                         console.log( err );
-                        /* eslint-enable no-console */
                     } );
             }
         },

@@ -2,16 +2,13 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1>Show details</h1>
-
             <table class="table table-striped">
-
                 <thead>
                 <tr>
                     <th>Name</th>
                     <th>Genre</th>
                     <th>Votes</th>
                     <th>Rating</th>
-
                 </tr>
                 </thead>
                 <tbody>
@@ -20,9 +17,7 @@
                         <td>{{show.genre_name1}}, {{show.genre_name2}}, {{show.genre_name3}}</td>
                         <td>{{ show.votes }} </td>
                         <td>{{ show.rating }}</td>
-
                     </tr>
-
                 </tbody>
             </table>
             <h2> Description</h2>
@@ -52,20 +47,15 @@
         },
         methods: {
             loadShow() {
-
                 /* eslint-disable no-console */
                 console.log("try to get info");
-                console.log("name" + this.series_name);
                 var name = this.series_name;
                 console.log(name);
                 var uri = "http://localhost:3000/api/show/?series_name=" + name;
                 axios
                     .get(uri)
                     .then(responce => {
-                        console.log("got a result");
-                        console.log(responce);
                         this.show = responce.data;
-                        console.log(this.show);
                         console.log(JSON.stringify(this.show));
                         this.getDescription();
                     })
@@ -92,8 +82,6 @@
                     })
             }
         },
-
-
         mounted() {
             return this.loadShow();
         }

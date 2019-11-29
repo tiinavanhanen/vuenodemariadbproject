@@ -135,17 +135,6 @@
                 console.log("editing series: " + JSON.stringify(show));
                 // eslint-disable-next-line no-console
                 console.log("komponentissa name, score " + show.series_name + show.score);
-                if (show.score === "") {
-                    axios
-                        .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
-                            "&season=" + show.season + "&episode=" + show.episode)
-                        .then( response => {
-                            // eslint-disable-next-line no-console
-                            console.log(response);
-                            this.editing = null;
-                            this.loadShows();
-                        });
-                } else {
                     axios
                         .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
                             "&season=" + show.season + "&episode=" + show.episode + "&score=" + show.score)
@@ -155,7 +144,7 @@
                             this.editing = null;
                             this.loadShows();
                         });
-                }
+
 
             },
             deleteSeries(show) {

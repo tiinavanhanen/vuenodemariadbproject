@@ -49,6 +49,10 @@
         },
 
         methods:{
+            /**
+             * Loads all shows from the database
+             * @return []
+             */
             loadShows() {
                 axios
                     .get( "http://localhost:3000/api/all_shows")

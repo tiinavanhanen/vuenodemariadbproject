@@ -13,7 +13,6 @@ Vue.config.productionTip = false;
 import HomeComponent from './components/HomeComponent.vue';
 import CreateComponent from './components/CreateComponent.vue';
 import IndexComponent from './components/IndexComponent.vue';
-import EditComponent from './components/EditComponent.vue';
 import CommentsComponent from './components/CommentsComponent.vue';
 import RecommendComponent from './components/RecommendComponent';
 import ShowComponent from './components/ShowComponent';
@@ -48,11 +47,6 @@ const routes = [
     name: 'posts',
     path: '/posts',
     component: IndexComponent
-  },
-  {
-    name: 'edit',
-    path: '/edit/:id',
-    component: EditComponent
   },
   {
     name: 'comments',

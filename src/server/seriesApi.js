@@ -190,6 +190,7 @@ router.get("/addseries", function (req, res) {
         var sql3 = "INSERT INTO ?? (series_id) VALUES (?)";
         con.query(sql3, [user, seriesID], function (err, result) {
             if (err) throw err;
+            console.log(JSON.stringify(result));
             console.log("lisätty tunnettu sarja");
             res.end("sarja lisätty");
         });

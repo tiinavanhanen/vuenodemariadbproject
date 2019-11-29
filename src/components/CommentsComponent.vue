@@ -10,10 +10,9 @@
             </form>
             <form @submit.prevent="handleCommentSubmit" id="addComment" style="display: none">
                 <label>Add comment</label>
-                <input
-                        type="text"
-                        v-model="show.comment"
-                />
+                <br>
+                <textarea class="col-md-8" v-model="show.comment" placeholder="add your comment"></textarea>
+                <br>
                 <button>Add</button>
             </form>
             <table class="table table-striped" v-if="hasComments">

@@ -17,6 +17,7 @@
                 </p>
             </form>
         </div>
+        
         <div class="col-md-8" id="ownseries">
             <p v-if="shows.length < 1" class="empty-table">
                 No series yet

@@ -30,7 +30,7 @@ router.get("/comments", function (req, res) {
     /* eslint-disable no-console */
     var q = url.parse(req.url, true).query;
     var name = q.showname;
-    var sql = "SELECT comment, username FROM comments, users WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?) AND username=(SELECT username from users WHERE user_id=comments.user_id);";
+    var sql = "SELECT comment_id, comment, username FROM comments, users WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?) AND username=(SELECT username from users WHERE user_id=comments.user_id);";
 
     con.query(sql, [name],function (err, result) {
         if (err)
@@ -47,12 +47,13 @@ router.get("/addcomment", function (req, res) {
     /* eslint-disable no-console */
     var q = url.parse(req.url, true).query;
     var name = q.showname;
+    var username = q.username;
     console.log("comments showname" + name);
     var comment = q.comment;
     var sql = "INSERT INTO comments (series_id, comment, user_id) VALUES\n" +
         "((SELECT series_id FROM all_series WHERE series_name=?),(?),\n" +
-        "(SELECT user_id FROM users WHERE username='testuser2'));";
-    con.query(sql, [name, comment],function (err, result) {
+        "(SELECT user_id FROM users WHERE username=?));";
+    con.query(sql, [name, comment, username],function (err, result) {
         if (err)
             throw (err);
         else{
@@ -267,4 +268,15 @@ router.get("/deleteseries", function (req, res) {
     });
 });
 
+router.get("/deletecomment", function (req, res) {
+    console.log("delete comment");
+    var q =url.parse(req.url, true).query;
+    var commentID = q.commentid;
+    var sql = "DELETE FROM comments WHERE comment_id=?";
+    con.query(sql, [commentID], function (err, result){
+        if(err) throw err;
+        console.log(result);
+        res.end("comment deleted");
+    })
+});
 module.exports = router;

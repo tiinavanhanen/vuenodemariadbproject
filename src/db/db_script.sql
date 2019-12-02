@@ -61,9 +61,11 @@ CREATE TABLE USERS (
 
 --comments, one table for all series
 CREATE TABLE comments(
+    comment_id INT NOT NULL AUTO_INCREMENT,
     series_id INT NOT NULL,
 	comment TEXT NOT NULL,
 	user_id INT NOT NULL,
+	PRIMARY KEY (comment_id),
 	FOREIGN KEY (user_id) REFERENCES users(user_id),
 	FOREIGN KEY (series_id) REFERENCES all_series(series_id)
 );

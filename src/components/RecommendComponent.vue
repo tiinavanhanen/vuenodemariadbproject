@@ -4,8 +4,7 @@
     <h1>Get recommendations</h1>
         <form @submit.prevent="handleSubmit">
             <v-select v-model="selected" :options="options" placeholder="Choose a genre">
-                <template slot="option" slot-scope="option">{{option.label}}
-                 </template>
+                    {{option.label}}
             </v-select>
             <button>Display recommendations</button>
         </form>

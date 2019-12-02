@@ -23,9 +23,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="comment in comments" :key="comment.id" >
+                    <tr v-for="comment in comments" :key="comment.comment_id" >
                         <td>{{ comment.comment }} </td>
                         <td>{{ comment.username }} </td>
+                        <td>
+                            <template v-if="comment.username === loggeduser">
+                            <button @click="deleteComment(comment)">Delete</button>
+                            </template>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -45,13 +50,14 @@
             },
             noComments() {
                 return this.isLoading === false && this.comments.length === 0;
-            }
+            },
         },
         data() {
             return {
                 comment: {
                     comment: '',
                     username: '',
+                    comment_id: ''
                 },
                 comments: [],
                 show: {
@@ -65,6 +71,7 @@
                 shows: [],
                 selected: null,
                 isLoading: true,
+                loggeduser: 'testuser'
             }
         },
         methods:{
@@ -76,11 +83,12 @@
             },
 
             handleCommentSubmit(){
+                //var username = "testuser";
                 const body = {
                     "showname": this.selected.label,
                     "comment": this.show.comment
                 };
-                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&comment=" + body.comment;
+                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&username=" + this.loggeduser + "&comment=" + body.comment;
                 axios
                     .get(uri)
                     .then( responce => {
@@ -124,6 +132,20 @@
                     })
                     .catch(err => {
                         console.log( err );
+                    })
+            },
+            deleteComment(comment) {
+                console.log("came to deleteComment");
+                console.log("id " + comment.comment_id);
+                var uri = "http://localhost:3000/api/deletecomment/?commentid=" + comment.comment_id;
+                axios
+                    .get(uri)
+                    .then(responce =>{
+                        console.log(responce);
+                        this.loadComments();
+                    })
+                    .catch(err => {
+                        console.log(err)
                     })
             }
         },

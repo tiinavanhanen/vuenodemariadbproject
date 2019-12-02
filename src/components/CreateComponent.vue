@@ -13,7 +13,10 @@
                     ❗Series is already on your list
                 </p>
                 <p v-if="error" class="error-message">
-                    ❗An error has occurred
+                    ❗We could not find a series by this name
+                </p>
+                <p v-if="isNegative" class="error-message">
+                    ❗Both season and episode must be positive numbers
                 </p>
             </form>
         </div>
@@ -34,11 +37,11 @@
                 <tr :key="show.series_name" v-for="show in shows">
                     <td>{{show.series_name}}</td>
                     <td v-if="editing === show.series_name">
-                        <input type="number" v-model="show.season">
+                        <input type="number" min="1" v-model="show.season">
                     </td>
                     <td v-else>{{show.season}}</td>
                     <td v-if="editing === show.series_name">
-                        <input type="number" v-model="show.episode">
+                        <input type="number" min="1" v-model="show.episode">
                     </td>
                     <td v-else>{{show.episode}}</td>
                     <td v-if="editing === show.series_name">
@@ -77,14 +80,13 @@
                     season: '',
                     episode: '',
                     score: '',
-                    votes: '',
                 },
                 shows: [],
                 options: [1,2,3,4,5],
                 isLoading: true,
                 editing: null,
                 submitting: false,
-                mode: "reading"
+                isNegative: false,
             }
         },
         methods: {
@@ -111,7 +113,7 @@
                             this.error = false;
                             this.series.series_name = '';
                             this.loadShows();
-                        } else {
+                        } else if (response.data === "sarjaa ei löytynyt") {
                             this.error = true;
                             this.check = false;
                             this.success = false;
@@ -132,10 +134,14 @@
             },
             editSeries(show) {
                 if (show.series_name === '' || show.season === '' || show.episode === '') return;
-                // eslint-disable-next-line no-console
-                console.log("editing series: " + JSON.stringify(show));
-                // eslint-disable-next-line no-console
-                console.log("komponentissa name, score " + show.series_name + show.score);
+                if (show.season < 1 || show.episode < 1) {
+                    this.isNegative = true;
+                } else {
+                    this.isNegative = false;
+                    // eslint-disable-next-line no-console
+                    console.log("editing series: " + JSON.stringify(show));
+                    // eslint-disable-next-line no-console
+                    console.log("komponentissa name, score " + show.series_name + show.score);
                     axios
                         .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
                             "&season=" + show.season + "&episode=" + show.episode + "&score=" + show.score)
@@ -145,8 +151,7 @@
                             this.editing = null;
                             this.loadShows();
                         });
-
-
+                }
             },
             deleteSeries(show) {
                 // eslint-disable-next-line no-console
@@ -172,11 +177,6 @@
                 this.editing = null;
                 // eslint-disable-next-line no-console
                 console.log("retrieved from cache series: " + JSON.stringify(series));
-            },
-        },
-        computed: {
-            invalidName() {
-                return this.series.series_name === ''
             },
         },
         mounted() {

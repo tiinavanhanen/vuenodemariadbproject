@@ -180,6 +180,7 @@ router.get("/addseries", function (req, res) {
                                 }
                             }, function showError() {
                                 console.log("An error has occured in moviedb");
+                                res.end("sarjaa ei löytynyt");
                             });
                         }
                     } else {

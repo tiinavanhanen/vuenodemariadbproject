@@ -27,7 +27,7 @@
                     <th>Name</th>
                     <th>Season</th>
                     <th>Episode</th>
-                    <th v-if="editing === show.series_name">Rating</th>
+                    <th v-if="editing !== null">Rating</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -84,6 +84,7 @@
                 isLoading: true,
                 editing: null,
                 submitting: false,
+                mode: "reading"
             }
         },
         methods: {

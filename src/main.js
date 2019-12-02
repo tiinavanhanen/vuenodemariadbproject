@@ -2,6 +2,10 @@ import Vue from 'vue'
 import App from './App.vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+import Axios from 'axios'
+
+Vue.prototype.$http = Axios;
+
 import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
@@ -16,6 +20,7 @@ import IndexComponent from './components/IndexComponent.vue';
 import CommentsComponent from './components/CommentsComponent.vue';
 import RecommendComponent from './components/RecommendComponent';
 import ShowComponent from './components/ShowComponent';
+import Register from './components/Register';
 
 const routes = [
   {
@@ -68,7 +73,15 @@ const routes = [
     path: '/show',
     props: true,
     component: ShowComponent
-  }
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: Register,
+    meta: {
+      guest: true
+    }
+  },
 ];
 
 const router = new VueRouter({ mode: 'history', routes: routes});

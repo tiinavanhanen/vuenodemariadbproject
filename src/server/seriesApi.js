@@ -4,6 +4,8 @@ const mysql = require('mysql');
 const config = require('../db/db_config.js');
 const db = config.database;
 const url = require('url');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const theMovieDb = require('../themoviedb/themoviedb');
 const con = mysql.createConnection({user: db.user, password: db.password, host: db.host, database: db.database});
 con.connect();
@@ -284,4 +286,27 @@ router.get("/deletecomment", function (req, res) {
         res.end("comment deleted");
     })
 });
+
+router.post('/register', function(req, res) {
+    console.log("register");
+   //var q = url.parse(req.url, true).query;
+    var username = req.body.name;
+    var useremail = req.body.email;
+    var userpassword = bcrypt.hashSync(req.body.password, 8);
+    console.log (username, useremail, userpassword);
+    var sql = "INSERT INTO USERS (username, email, password) VALUES ((?), (?), (?));";
+    con.query(sql, [username, useremail, userpassword], function(err, result){
+        if(err) console.log(err)//return res.status(500).send("There was a problem registering the user.");
+        console.log(result);
+        sql = "SELECT * FROM users WHERE username = ?";
+        con.query(sql, [username], function (err, user){
+            if (err) return res.status(500).send("There was a problem getting user");
+            console.log(user);
+            let token = jwt.sign({ id: user.user_id }, config.secret, {expiresIn: 86400 // expires in 24 hours
+            });
+            res.status(200).send({ auth: true, token: token, user: user });
+        });
+    });
+});
+
 module.exports = router;

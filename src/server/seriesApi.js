@@ -7,6 +7,7 @@ const url = require('url');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const theMovieDb = require('../themoviedb/themoviedb');
+const configUser = require('./config');
 const con = mysql.createConnection({user: db.user, password: db.password, host: db.host, database: db.database});
 con.connect();
 
@@ -297,12 +298,13 @@ router.post('/register', function(req, res) {
     var sql = "INSERT INTO USERS (username, email, password) VALUES ((?), (?), (?));";
     con.query(sql, [username, useremail, userpassword], function(err, result){
         if(err) console.log(err)//return res.status(500).send("There was a problem registering the user.");
-        console.log(result);
+        console.log(JSON.stringify(result));
         sql = "SELECT * FROM users WHERE username = ?";
-        con.query(sql, [username], function (err, user){
+        con.query(sql, [username], function (err, result){
             if (err) return res.status(500).send("There was a problem getting user");
-            console.log(user);
-            let token = jwt.sign({ id: user.user_id }, config.secret, {expiresIn: 86400 // expires in 24 hours
+            console.log(" here result is" + JSON.stringify(result));
+            var user = JSON.stringify((result));
+            let token = jwt.sign({ id: user.user_id }, configUser.secret, {expiresIn: 86400 // expires in 24 hours
             });
             res.status(200).send({ auth: true, token: token, user: user });
         });

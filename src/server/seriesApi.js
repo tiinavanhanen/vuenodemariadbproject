@@ -295,20 +295,36 @@ router.post('/register', function(req, res) {
     var useremail = req.body.email;
     var userpassword = bcrypt.hashSync(req.body.password, 8);
     console.log (username, useremail, userpassword);
-    var sql = "INSERT INTO USERS (username, email, password) VALUES ((?), (?), (?));";
-    con.query(sql, [username, useremail, userpassword], function(err, result){
-        if(err) console.log(err)//return res.status(500).send("There was a problem registering the user.");
-        console.log(JSON.stringify(result));
-        sql = "SELECT * FROM users WHERE username = ?";
-        con.query(sql, [username], function (err, result){
-            if (err) return res.status(500).send("There was a problem getting user");
-            console.log(" here result is" + JSON.stringify(result));
-            var user = JSON.stringify((result));
-            let token = jwt.sign({ id: user.user_id }, configUser.secret, {expiresIn: 86400 // expires in 24 hours
-            });
-            res.status(200).send({ auth: true, token: token, user: user });
-        });
-    });
+    var sql ="SELECT user_id FROM users WHERE username=?";
+    con.query(sql, [username], function (err, result) {
+        if (err) console.log(err);
+        if(result) {
+            if (result.length > 0) {
+                res.send("This username is already in use");
+            } else {
+                sql = "INSERT INTO USERS (username, email, password) VALUES ((?), (?), (?));";
+                con.query(sql, [username, useremail, userpassword], function (err, result) {
+                    if (err) console.log(err);//return res.status(500).send("There was a problem registering the user.");
+                    console.log(JSON.stringify(result));
+                    sql = "CREATE TABLE ?? (series_id INT NOT NULL, season INT NOT NULL DEFAULT '1', episode INT NOT NULL DEFAULT '1',FOREIGN KEY (series_id) REFERENCES all_series(series_id));";
+                    con.query(sql, [username], function (err, result) {
+                        if (err) console.log(err);
+                        console.log(result);
+                        sql = "SELECT * FROM users WHERE username = ?";
+                        con.query(sql, [username], function (err, result) {
+                            if (err) return res.status(500).send("There was a problem getting user");
+                            console.log(" here result is" + JSON.stringify(result));
+                            var user = JSON.stringify((result));
+                            let token = jwt.sign({id: user.user_id}, configUser.secret, {
+                                expiresIn: 86400 // expires in 24 hours
+                            });
+                            res.status(200).send({auth: true, token: token, user: user});
+                        });
+                    })
+                });
+            }
+        }
+    })
 });
 
 module.exports = router;

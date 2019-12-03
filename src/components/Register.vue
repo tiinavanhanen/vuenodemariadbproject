@@ -6,7 +6,9 @@
             <div>
                 <input id="name" type="text" v-model="name" required autofocus>
             </div>
-
+            <p v-if="check" class="error-message">
+                ❗ This username is already in use
+            </p>
             <label for="email" >E-Mail Address</label>
             <div>
                 <input id="email" type="email" v-model="email" required>
@@ -39,6 +41,7 @@
                 email : "",
                 password : "",
                 password_confirmation : "",
+                check: false
             }
         },
         methods : {
@@ -53,16 +56,21 @@
                         password: this.password,
                     })
                         .then(response => {
-                            localStorage.setItem('user',JSON.stringify(response.data.user));
-                            localStorage.setItem('jwt',response.data.token);
+                            if (response.data=="This username is already in use"){
+                                this.check = true;
+                            }
+                            else{
+                                localStorage.setItem('user',JSON.stringify(response.data.user));
+                                localStorage.setItem('jwt',response.data.token);
 
-                            if (localStorage.getItem('jwt') != null){
-                                this.$emit('loggedIn');
-                                if(this.$route.params.nextUrl != null){
-                                    this.$router.push(this.$route.params.nextUrl)
-                                }
-                                else{
-                                    this.$router.push('/')
+                                if (localStorage.getItem('jwt') != null){
+                                    this.$emit('loggedIn');
+                                    if(this.$route.params.nextUrl != null){
+                                        this.$router.push(this.$route.params.nextUrl)
+                                    }
+                                    else{
+                                        this.$router.push('/')
+                                    }
                                 }
                             }
                         })

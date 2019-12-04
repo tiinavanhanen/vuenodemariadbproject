@@ -18,6 +18,7 @@
           <router-link to="/recommend" class="nav-link">Recommendations</router-link>
         </li>
       </ul>
+      <button v-on:click="logout">Log out</button>
     </nav><br />
     <transition name="fade">
       <router-view></router-view>
@@ -37,6 +38,13 @@
 <script>
 
   export default {
+    methods: {
+      logout() {
+        /* eslint-disable no-console */
+        console.log("log out");
+        localStorage.clear();
 
+      }
+    }
   }
 </script>

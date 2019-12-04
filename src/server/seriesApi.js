@@ -114,7 +114,6 @@ router.get("/addseries", function (req, res) {
     var user = q.username;
     var genres = [];
     var seriesID = -1;
-
     var sql = "SELECT series_id FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?);";
     con.query(sql, [user, name], function (err ,result) {
         if (result) {
@@ -201,7 +200,7 @@ router.get("/addseries", function (req, res) {
         con.query(sql3, [user, seriesID], function (err, result) {
             if (err) throw err;
             console.log(JSON.stringify(result));
-            console.log("lisätty tunnettu sarja");
+            console.log("sarja lisätty");
             res.end("sarja lisätty");
         });
     }

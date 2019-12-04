@@ -117,32 +117,28 @@ const routes = [
 
 const router = new VueRouter({ mode: 'history', routes: routes});
 
-
 router.beforeEach((to, from, next) => {
-  if(to.matched.some(record => record.meta.requiresAuth)) {
-    if (localStorage.getItem('jwt') == null) {
-      next({
-        path: '/login',
-        params: { nextUrl: to.fullPath }
-      })
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        if (localStorage.getItem('jwt') == null) {
+            next ({
+                path: '/login',
+                params: { nextUrl: to.fullPath }
+            })
+        } else {
+            next()
+        }
+    } else if (to.matched.some(record => record.meta.guest)) {
+        if(localStorage.getItem('jwt') == null){
+            next()
+        } else {
+            next({ path: '/login',})
+        }
     } else {
-          next()
+        next ({
+            path: '/login',
+            params: { nextUrl: to.fullPath }
+        })
     }
-
-  } else if(to.matched.some(record => record.meta.guest)) {
-    if(localStorage.getItem('jwt') == null){
-      next()
-    }
-    else{
-      next({ path: '/login',})
-    }
-
-  }else {
-    next({
-      path: '/login',
-      params: { nextUrl: to.fullPath }
-    })
-  }
 });
 
 new Vue(Vue.util.extend({ router }, App)).$mount('#app');

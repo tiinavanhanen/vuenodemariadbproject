@@ -95,9 +95,12 @@
                 console.log("lisätään sarjaa");
                 this.submitting = true;
                 const body = {
-                    "showname": this.series.series_name
+                    "showname": this.series.series_name,
+                    "loggedUser": localStorage.getItem('username'),
                 };
-                var uri = "http://localhost:3000/api/addseries/?showname=" + body.showname + "&username=" + "testuser";
+                // eslint-disable-next-line no-console
+                console.log(body.loggedUser);
+                var uri = "http://localhost:3000/api/addseries/?showname=" + body.showname + "&username=" + body.loggedUser;
                 axios
                     .get(uri)
                     .then(response => {
@@ -122,8 +125,9 @@
                     });
             },
             loadShows() {
+                var loggedUser = localStorage.getItem('username');
                 axios
-                    .get("http://localhost:3000/api/ownseries/?username=" + "testuser")
+                    .get("http://localhost:3000/api/ownseries/?username=" + loggedUser)
                     .then( response => {
                         // eslint-disable-next-line no-console
                         console.log(response);
@@ -133,6 +137,7 @@
                     });
             },
             editSeries(show) {
+                var loggedUser = localStorage.getItem('username');
                 if (show.series_name === '' || show.season === '' || show.episode === '') return;
                 if (show.season < 1 || show.episode < 1) {
                     this.isNegative = true;
@@ -143,7 +148,7 @@
                     // eslint-disable-next-line no-console
                     console.log("komponentissa name, score " + show.series_name + show.score);
                     axios
-                        .get("http://localhost:3000/api/editseries/?username=" + "testuser" + "&showname=" + show.series_name +
+                        .get("http://localhost:3000/api/editseries/?username=" + loggedUser + "&showname=" + show.series_name +
                             "&season=" + show.season + "&episode=" + show.episode + "&score=" + show.score)
                         .then( response => {
                             // eslint-disable-next-line no-console
@@ -154,12 +159,11 @@
                 }
             },
             deleteSeries(show) {
+                var loggedUser = localStorage.getItem('username');
                 // eslint-disable-next-line no-console
                 console.log("deleting series: " + JSON.stringify(show));
-                // eslint-disable-next-line no-console
-                //console.log("komponentissa nimi " + show.series_name);
                 axios
-                    .get("http://localhost:3000/api/deleteseries/?username=" + "testuser" + "&showname=" + show.series_name)
+                    .get("http://localhost:3000/api/deleteseries/?username=" + loggedUser + "&showname=" + show.series_name)
                     .then( response => {
                         // eslint-disable-next-line no-console
                         console.log(response);

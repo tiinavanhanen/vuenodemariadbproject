@@ -29,50 +29,69 @@ const routes = [
     component: HomeComponent
   },
   {
-    name: 'add',
-    path: '/addseries',
-    component: CreateComponent
-  },
-  {
     name: 'addseries',
     path: '/addseries',
-    component: CreateComponent
+    component: CreateComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     name: 'editseries',
     path: '/editseries',
-    component: CreateComponent
+    component: CreateComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     name: 'deleteseries',
     path: '/deleteseries',
-    component: CreateComponent
+    component: CreateComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     name: 'posts',
     path: '/posts',
-    component: IndexComponent
+    component: IndexComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     name: 'comments',
     path: '/comments',
-    component: CommentsComponent
+    component: CommentsComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     name: 'addcomment',
     path: '/addcomments',
-    component: CommentsComponent
+    component: CommentsComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     name: 'recommend',
     path: '/recommend',
-    component: RecommendComponent
+    component: RecommendComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     name: 'show',
     path: '/show',
     props: true,
-    component: ShowComponent
+    component: ShowComponent,
+    meta: {
+      requiresAuth: true
+    }
   },
   {
     path: '/register',
@@ -85,5 +104,27 @@ const routes = [
 ];
 
 const router = new VueRouter({ mode: 'history', routes: routes});
+
+router.beforeEach((to, from, next) => {
+  if(to.matched.some(record => record.meta.requiresAuth)) {
+    if (localStorage.getItem('jwt') == null) {
+      next({
+        path: '/login',
+        params: { nextUrl: to.fullPath }
+      })
+    } else {
+          next({ name: 'addseries'})
+    }
+  } else if(to.matched.some(record => record.meta.guest)) {
+    if(localStorage.getItem('jwt') == null){
+      next()
+    }
+    else{
+      next({ name: 'addseries'})
+    }
+  }else {
+    next()
+  }
+});
 
 new Vue(Vue.util.extend({ router }, App)).$mount('#app');

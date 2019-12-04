@@ -27,7 +27,7 @@
     const axios = require('axios');
     export default {
         name: "app",
-        props:['key'],
+        props:['show.series_name'],
         computed: {
             hasShows() {
                 return this.isLoading === false && this.shows.length > 0;

@@ -117,7 +117,7 @@ const routes = [
 
 const router = new VueRouter({ mode: 'history', routes: routes});
 
-/*
+
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresAuth)) {
     if (localStorage.getItem('jwt') == null) {
@@ -126,7 +126,7 @@ router.beforeEach((to, from, next) => {
         params: { nextUrl: to.fullPath }
       })
     } else {
-          next({ name: 'addseries'})
+          next()
     }
 
   } else if(to.matched.some(record => record.meta.guest)) {
@@ -134,9 +134,8 @@ router.beforeEach((to, from, next) => {
       next()
     }
     else{
-      next({ name: 'addseries'})
+      next({ path: '/login',})
     }
-
 
   }else {
     next({
@@ -145,5 +144,5 @@ router.beforeEach((to, from, next) => {
     })
   }
 });
-*/
+
 new Vue(Vue.util.extend({ router }, App)).$mount('#app');

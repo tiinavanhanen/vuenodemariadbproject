@@ -51,7 +51,8 @@ router.get("/addcomment", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var username = q.username;
-    console.log("comments showname" + name);
+    console.log("comments showname " + name);
+    console.log("comments username " + username);
     var comment = q.comment;
     var sql = "INSERT INTO comments (series_id, comment, user_id) VALUES\n" +
         "((SELECT series_id FROM all_series WHERE series_name=?),(?),\n" +
@@ -318,6 +319,7 @@ router.post('/register', function(req, res) {
                             let token = jwt.sign({id: user.user_id}, configUser.secret, {
                                 expiresIn: 86400 // expires in 24 hours
                             });
+
                             res.status(200).send({auth: true, token: token, user: user});
                         });
                     })
@@ -343,6 +345,7 @@ router.post("/login", function(req, res) {
                 return res.status(401).send({ auth: false, token: null });
             } else {
                 let token = jwt.sign({ id: user.user_id }, configUser.secret, { expiresIn: 86400 }); // expires in 24 hours
+                console.log("user " + user);
                 res.status(200).send({ auth: true, token: token, user: user });
             }
         }

@@ -88,7 +88,9 @@
                     "showname": this.selected.label,
                     "comment": this.show.comment
                 };
-                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&username=" + this.loggeduser + "&comment=" + body.comment;
+                var loggeduser = localStorage.getItem('username');
+                console.log("loggeduser " + loggeduser);
+                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&username=" + loggeduser + "&comment=" + body.comment;
                 axios
                     .get(uri)
                     .then( responce => {

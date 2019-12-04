@@ -72,8 +72,9 @@ router.get("/recommend", function (req, res) {
     /* eslint-disable no-console */
     var q = url.parse(req.url, true).query;
     var username = q.username;
-    //console.log(username);
+    console.log(username);
     var genre = q.genre;
+    console.log(genre);
     var sql = "SELECT series_name, votes, (score/votes) AS rating from all_series  " +
         "WHERE (score/votes>2) AND(genre2=? OR genre1=? OR genre3=? OR genre4=? OR genre5=?) " +
         "AND all_series.series_id NOT IN (SELECT series_id FROM ??);";

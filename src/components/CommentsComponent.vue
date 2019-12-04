@@ -27,7 +27,7 @@
                         <td>{{ comment.comment }} </td>
                         <td>{{ comment.username }} </td>
                         <td>
-                            <template v-if="comment.username === loggeduser">
+                            <template v-if="comment.username === loggedUser">
                             <button @click="deleteComment(comment)">Delete</button>
                             </template>
                         </td>
@@ -71,30 +71,26 @@
                 shows: [],
                 selected: null,
                 isLoading: true,
-                loggeduser: 'testuser'
+                loggedUser: localStorage.getItem('username')
             }
         },
         methods:{
             handleSubmit() {
                 /* eslint-disable no-console */
-                console.log( this.show.name);
                 this.loadComments(this.selected.label);
                 document.getElementById("addComment").style="display: initial"
             },
 
             handleCommentSubmit(){
-                //var username = "testuser";
                 const body = {
                     "showname": this.selected.label,
                     "comment": this.show.comment
                 };
                 var loggeduser = localStorage.getItem('username');
-                console.log("loggeduser " + loggeduser);
                 var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&username=" + loggeduser + "&comment=" + body.comment;
                 axios
                     .get(uri)
                     .then( responce => {
-                        console.log( "got a comment result");
                         console.log(responce);
                         this.loadComments();
                     });
@@ -108,10 +104,7 @@
                     .get(uri)
                     .then( responce => {
                         this.isLoading = false;
-                        console.log( "got a result");
-                        console.log(responce);
                         this.comments = responce.data;
-                        console.log(JSON.stringify(this.comments));
                     } )
                     .catch( err => {
                         console.log( err );
@@ -123,7 +116,6 @@
                     .get(uri)
                     .then(responce =>{
                         this.shows=responce.data;
-                        console.log( this.shows );
                         for(var i=0; i<this.shows.length; i++){
                             this.option.value = i;
                             this.option.label = this.shows[i].series_name;
@@ -137,8 +129,6 @@
                     })
             },
             deleteComment(comment) {
-                console.log("came to deleteComment");
-                console.log("id " + comment.comment_id);
                 var uri = "http://localhost:3000/api/deletecomment/?commentid=" + comment.comment_id;
                 axios
                     .get(uri)

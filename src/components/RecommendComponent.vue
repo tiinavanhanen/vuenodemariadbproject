@@ -54,6 +54,7 @@
                 ],
                 option: {
                     value: '',
+                    id: '',
                     label: ''
                 }
             }
@@ -62,15 +63,14 @@
         methods:{
             handleSubmit() {
                 const body = {
-                    "genre": this.selected.value,
+                    "genre": this.selected.id,
                 };
-                var uri = "http://localhost:3000/api/recommend/?username=" + "testuser" + "&genre=" + body.genre;
+                var uri = "http://localhost:3000/api/recommend/?username=" + localStorage.getItem('username') + "&genre=" + body.genre;
                 axios
                     .get(uri)
                     .then( responce => {
                         /* eslint-disable no-console */
                         this.isLoading = false;
-                        console.log(responce);
                         this.shows = responce.data;
                     });
             },
@@ -80,10 +80,10 @@
                     .get(uri)
                     .then(responce =>{
                         this.genres=responce.data;
-                        console.log( this.genres );
                         for(var i=0; i<this.genres.length; i++){
                             this.option.value = i;
                             this.option.label = this.genres[i].genre_name;
+                            this.option.id = this.genres[i].genre_id;
                             this.options.push(this.option);
                             this.option = {value: '', label: ''}
                         }

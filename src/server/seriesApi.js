@@ -278,7 +278,7 @@ router.get("/deleteseries", function (req, res) {
 
 router.get("/deletecomment", function (req, res) {
     console.log("delete comment");
-    var q =url.parse(req.url, true).query;
+    var q = url.parse(req.url, true).query;
     var commentID = q.commentid;
     var sql = "DELETE FROM comments WHERE comment_id=?";
     con.query(sql, [commentID], function (err, result){
@@ -322,6 +322,32 @@ router.post('/register', function(req, res) {
                         });
                     })
                 });
+            }
+        }
+    })
+});
+
+router.post("/login", function(req, res) {
+    console.log("login");
+    var q = url.parse(req.url, true).query;
+    var username = q.username;
+    var password = q.password;
+    var sql = "SELECT * FROM users WHERE username=?";
+    con.query(sql, [username], function(err, result) {
+        if (err) throw err;
+        console.log(result.length);
+        if (result.length === 0) {
+            return res.status(404).send("user not found");
+        } else {
+            console.log("user found");
+            var user = JSON.stringify((result));
+            var valid = bcrypt.compareSync(password, user.password());
+            if (!valid) {
+                console.log("wrong password");
+                return res.status(401).send({ auth: false, token: null });
+            } else {
+                let token = jwt.sign({ id: user.user_id }, config.secret, { expiresIn: 86400 }); // expires in 24 hours
+                res.status(200).send({ auth: true, token: token, user: user });
             }
         }
     })

@@ -21,6 +21,7 @@ import CommentsComponent from './components/CommentsComponent.vue';
 import RecommendComponent from './components/RecommendComponent';
 import ShowComponent from './components/ShowComponent';
 import Register from './components/Register';
+import Login from "@/components/Login";
 
 const routes = [
   {
@@ -97,6 +98,14 @@ const routes = [
     path: '/register',
     name: 'register',
     component: Register,
+    meta: {
+      guest: true
+    }
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login,
     meta: {
       guest: true
     }

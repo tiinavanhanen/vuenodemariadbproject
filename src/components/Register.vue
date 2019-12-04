@@ -46,6 +46,7 @@
         },
         methods : {
             handleSubmit(e) {
+                this.check = false;
                 e.preventDefault();
                 if (this.password === this.password_confirmation && this.password.length > 0)
                 {
@@ -56,10 +57,10 @@
                         password: this.password,
                     })
                         .then(response => {
-                            if (response.data=="This username is already in use"){
+                            if (response.data === "This username is already in use"){
                                 this.check = true;
                             }
-                            else{
+                            else {
                                 localStorage.setItem('user',JSON.stringify(response.data.user));
                                 localStorage.setItem('jwt',response.data.token);
 

@@ -1,18 +1,16 @@
 <template>
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h1>Login</h1>
-            <form @submit.prevent="handleSubmit">
-                <label>Username</label>
-                <div><input type="text" v-model="username" required autofocus/></div>
-                <label>Password</label>
-                <div><input type="password" v-model="password" required/></div>
-                <div><button>Login</button></div>
-                <p v-if="error" class="error-message">
-                    ❗Incorrect username or password
-                </p>
-            </form>
-        </div>
+    <div>
+        <h4>Login</h4>
+        <form @submit.prevent="handleSubmit">
+            <label>Username</label>
+            <div><input type="text" v-model="username" required autofocus/></div>
+            <label>Password</label>
+            <div><input type="password" v-model="password" required/></div>
+            <div><button>Login</button></div>
+            <p v-if="error" class="error-message">
+                ❗Incorrect username or password
+            </p>
+        </form>
     </div>
 </template>
 
@@ -34,22 +32,24 @@
                     password: this.password,
                 })
                     .then(response => {
-                        localStorage.setItem('user', JSON.stringify(response.data.user));
-                        localStorage.setItem('username', this.username);
-                        localStorage.setItem('jwt', response.data.token);
-                        if (localStorage.getItem('jwt') != null) {
-                            this.$emit('loggedIn');
-                            this.error = false;
-                            if (this.$route.params.nextUrl != null) {
-                                this.$router.push(this.$route.params.nextUrl)
-                            } else {
-                                this.$router.push('/addseries')
+                        if (JSON.stringify(response.data.token) != null) {
+                            localStorage.setItem('user', JSON.stringify(response.data.user));
+                            localStorage.setItem('username', this.username);
+                            localStorage.setItem('jwt', response.data.token);
+                            if (localStorage.getItem('jwt') != null) {
+                                this.$emit('logged in');
+                                this.error = false;
+                                if (this.$route.params.nextUrl != null) {
+                                    this.$router.push(this.$route.params.nextUrl)
+                                } else {
+                                    this.$router.push('/addseries')
+                                }
                             }
                         }
                     })
                     .catch(error => {
-                        // eslint-disable-next-line no-console
-                        console.log(error);
+                        /* eslint-disable no-console */
+                        console.error(error);
                         this.error = true;
                         this.username = "";
                         this.password = "";

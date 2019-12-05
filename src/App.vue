@@ -2,7 +2,7 @@
   <div class="container">
     <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li v-if="checklogin" class="nav-item">
           <router-link to="/" class="nav-link">Home</router-link>
         </li>
         <li class="nav-item">
@@ -17,8 +17,10 @@
         <li class="nav-item">
           <router-link to="/recommend" class="nav-link">Recommendations</router-link>
         </li>
+        <li class="nav-item">
+          <button v-on:click="logout">Log out</button>
+        </li>
       </ul>
-      <button v-on:click="logout">Log out</button>
     </nav><br />
     <transition name="fade">
       <router-view></router-view>
@@ -44,6 +46,9 @@
         console.log("log out");
         localStorage.clear();
 
+      },
+      checklogin() {
+        return localStorage.getItem('jwt') != null;
       }
     }
   }

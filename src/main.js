@@ -128,7 +128,7 @@ router.beforeEach((to, from, next) => {
             next()
         }
     } else if (to.matched.some(record => record.meta.guest)) {
-        if(localStorage.getItem('jwt') == null){
+        if (localStorage.getItem('jwt') == null) {
             next()
         } else {
             next({ path: '/login',})

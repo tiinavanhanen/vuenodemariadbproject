@@ -62,7 +62,7 @@
                             }
                             else {
                                 localStorage.setItem('user',JSON.stringify(response.data.user));
-                                localStorage.setItem('username', this.username);
+                                localStorage.setItem('username', this.name);
                                 localStorage.setItem('jwt',response.data.token);
 
                                 if (localStorage.getItem('jwt') != null){
@@ -71,7 +71,7 @@
                                         this.$router.push(this.$route.params.nextUrl)
                                     }
                                     else{
-                                        this.$router.push('/')
+                                        this.$router.push('/addseries')
                                     }
                                 }
                             }
@@ -82,7 +82,7 @@
                         });
                 } else {
                     this.password = "";
-                    this.passwordConfirm = "";
+                    this.password_confirmation = "";
 
                     return alert("Passwords do not match")
                 }

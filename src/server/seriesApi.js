@@ -349,7 +349,7 @@ router.post("/login", function(req, res) {
                 res.status(200).send({ auth: true, token: token, user: user });
             }
         }
-        else{
+        else {
             return res.status(404).send("user not found");
         }
     })

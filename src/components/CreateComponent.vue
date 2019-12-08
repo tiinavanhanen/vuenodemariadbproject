@@ -90,6 +90,10 @@
             }
         },
         methods: {
+            /**
+             * Called when the user clicks the add series button
+             * Adds the series the user inputted into the form to the database
+             */
             addSeries() {
                 // eslint-disable-next-line no-console
                 console.log("lisätään sarjaa");
@@ -124,6 +128,10 @@
                         this.submitting = false;
                     });
             },
+            /**
+             * Called when the page loads
+             * Loads all shows from the current logged user's table in the database
+             */
             loadShows() {
                 var loggedUser = localStorage.getItem('username');
                 axios
@@ -136,6 +144,11 @@
                         console.log(this.shows);
                     });
             },
+            /**
+             * Called when the user clicks the update button in edit mode
+             * Updates the season, episode and rating of the series in the database
+             * @param show the series to be edited
+             */
             editSeries(show) {
                 var loggedUser = localStorage.getItem('username');
                 if (show.series_name === '' || show.season === '' || show.episode === '') return;
@@ -158,6 +171,11 @@
                         });
                 }
             },
+            /**
+             * Called when the user clicks the delete button in edit mode
+             * Deletes the series from the current logged user's table in the database
+             * @param show the series to be deleted
+             */
             deleteSeries(show) {
                 var loggedUser = localStorage.getItem('username');
                 // eslint-disable-next-line no-console
@@ -170,12 +188,22 @@
                         this.loadShows();
                     });
             },
+            /**
+             * Called when the user clicks the edit button
+             * Enables the editing of series on the current logged user's table
+             * @param series the series the user clicked and wishes to edit or delete
+             */
             editMode(series) {
                 this.cachedSeries = Object.assign({}, series);
                 this.editing = series.series_name;
                 // eslint-disable-next-line no-console
                 console.log("cached series: " + JSON.stringify(series));
             },
+            /**
+             * Called when the user clicks the cancel button in edit mode
+             * Cancels all edits done in edit mode and exits edit mode
+             * @param series the series the user clicked and wished to edit or delete
+             */
             cancelEdit(series) {
                 Object.assign(series, this.cachedSeries);
                 this.editing = null;

@@ -61,6 +61,9 @@
         },
 
         methods:{
+            /**
+             * Gets called when the genre is chosen and the "Display recommendatoins" button is pressed
+             */
             handleSubmit() {
                 const body = {
                     "genre": this.selected.id,
@@ -74,6 +77,10 @@
                         this.shows = responce.data;
                     });
             },
+            /**
+             * Loads all genres from the database
+             * @return [] list of genre objects (genre_id and genre_name)
+             */
             getGenres(){
                 var uri="http://localhost:3000/api/genres";
                 axios

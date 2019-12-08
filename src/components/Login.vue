@@ -25,6 +25,9 @@
             }
         },
         methods: {
+            /**
+             * Gets called when the "Login" button is pressed in order to log in
+             */
             handleSubmit() {
                 let url = "http://localhost:3000/api/login";
                 this.$http.post(url, {
@@ -54,9 +57,7 @@
                         this.username = "";
                         this.password = "";
                     });
-
             },
-
         },
     }
 </script>

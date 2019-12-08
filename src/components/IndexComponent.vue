@@ -51,7 +51,7 @@
         methods:{
             /**
              * Loads all shows from the database
-             * @return []
+             * @return [] list of show objects (series_name, votes and rating for each show)
              */
             loadShows() {
                 axios

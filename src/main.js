@@ -121,7 +121,7 @@ router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (localStorage.getItem('jwt') == null) {
             next ({
-                path: '/login',
+                path: '/',
                 params: { nextUrl: to.fullPath }
             })
         } else {
@@ -131,11 +131,11 @@ router.beforeEach((to, from, next) => {
         if (localStorage.getItem('jwt') == null) {
             next()
         } else {
-            next({ path: '/login',})
+            next({ path: '/',})
         }
     } else {
         next ({
-            path: '/login',
+            path: '/',
             params: { nextUrl: to.fullPath }
         })
     }

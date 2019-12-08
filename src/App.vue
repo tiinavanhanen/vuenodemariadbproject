@@ -1,27 +1,34 @@
 <template>
   <div class="container">
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark" >
       <ul class="navbar-nav">
-        <li v-if="checklogin" class="nav-item">
-          <router-link to="/" class="nav-link">Home</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/addseries" class="nav-link">Add series</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/posts" class="nav-link">All shows</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/comments" class="nav-link">Comments</router-link>
-        </li>
-        <li class="nav-item">
-          <router-link to="/recommend" class="nav-link">Recommendations</router-link>
-        </li>
-        <li class="nav-item">
-          <button v-on:click="logout">Log out</button>
-        </li>
+        <template v-if="loggedUser === null">
+          <li class="nav-item">
+            <router-link to="/" class="nav-link">Home</router-link>
+          </li>
+        </template>
+
+        <template v-else>
+          <li class="nav-item">
+            <router-link to="/addseries" class="nav-link">Add series</router-link>
+          </li>
+          <li class="nav-item" >
+            <router-link to="/posts" class="nav-link">All shows</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/comments" class="nav-link">Comments</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/recommend" class="nav-link">Recommendations</router-link>
+          </li>
+          <li class="nav-item">
+            <button v-on:click="logout">Log out</button>
+          </li>
+        </template>
       </ul>
-    </nav><br />
+    </nav>
+    <br />
     <transition name="fade">
       <router-view></router-view>
     </transition>
@@ -38,17 +45,18 @@
 </style>
 
 <script>
-
   export default {
+    data(){
+      return{
+        loggedUser: localStorage.getItem('username')
+      }
+    },
     methods: {
       logout() {
         /* eslint-disable no-console */
         console.log("log out");
         localStorage.clear();
-
-      },
-      checklogin() {
-        return localStorage.getItem('jwt') != null;
+        this.$router.push('/');
       }
     }
   }

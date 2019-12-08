@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <h1>Comments</h1>
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="loadComments">
                 <v-select v-model="selected" :options="options" placeholder="Choose a show">
                     <template slot="option" slot-scope="option">{{option.label}}
                     </template></v-select>
@@ -75,12 +75,9 @@
             }
         },
         methods:{
-            handleSubmit() {
-                /* eslint-disable no-console */
-                this.loadComments(this.selected.label);
-                document.getElementById("addComment").style="display: initial"
-            },
-
+            /**
+             * Gets called when the "Add" button is pressed in order to add a comment
+             */
             handleCommentSubmit(){
                 const body = {
                     "showname": this.selected.label,
@@ -91,11 +88,16 @@
                 axios
                     .get(uri)
                     .then( responce => {
+                        /* eslint-disable no-console */
                         console.log(responce);
                         this.loadComments();
                     });
             },
+            /**
+             * Gets called when the name of the show is chosen and the button "Display comments" is pressed or when a new comment has been added
+             */
             loadComments() {
+                document.getElementById("addComment").style="display: initial";
                 const body = {
                     "showname": this.selected.label
                 };
@@ -110,6 +112,9 @@
                         console.log( err );
                     } );
             },
+            /**
+             * Gets called automatically when the page is opened in order to get the options for the dropdown list with the shows' names
+             */
             getShowNames(){
                 var uri="http://localhost:3000/api/all_shows";
                 axios
@@ -128,6 +133,10 @@
                         console.log( err );
                     })
             },
+            /**
+             * Gets called when user presses "Delete" button in order to delete one of the comments
+             * @param comment The comment object that will be deleted
+             */
             deleteComment(comment) {
                 var uri = "http://localhost:3000/api/deletecomment/?commentid=" + comment.comment_id;
                 axios

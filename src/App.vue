@@ -52,10 +52,14 @@
       }
     },
     methods: {
+      /**
+       * Gets called when the "Log out" button is pressed in order to log out
+       */
       logout() {
         /* eslint-disable no-console */
         console.log("log out");
         localStorage.clear();
+        this.loggedUser = null;
         this.$router.push('/');
       }
     }

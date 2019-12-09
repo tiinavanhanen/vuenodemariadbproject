@@ -12,17 +12,11 @@ const con = mysql.createConnection({user: db.user, password: db.password, host: 
 con.connect();
 
 router.get("/all_shows", function (req, res) {
-    /* eslint-disable no-console */
-    console.log("get all series ");
-
     var sql = "SELECT series_name, votes, (score/votes) AS rating FROM all_series;";
-
     con.query(sql,  function (err, result) {
         if (err)
             throw (err);
-        else{
-            console.log(result);
-
+        else {
             res.send(JSON.stringify(result));
             /* eslint-enable no-console */
         }
@@ -30,29 +24,24 @@ router.get("/all_shows", function (req, res) {
 });
 
 router.get("/comments", function (req, res) {
-    /* eslint-disable no-console */
     var q = url.parse(req.url, true).query;
     var name = q.showname;
-    var sql = "SELECT comment_id, comment, username FROM comments, users WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?) AND username=(SELECT username from users WHERE user_id=comments.user_id);";
-
+    var sql = "SELECT comment_id, comment, username FROM comments, users " +
+        "WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?) " +
+        "AND username=(SELECT username from users WHERE user_id=comments.user_id);";
     con.query(sql, [name],function (err, result) {
         if (err)
             throw (err);
-        else{
-            console.log(result);
-
+        else {
             res.send(JSON.stringify(result));
         }
     });
 });
 
 router.get("/addcomment", function (req, res) {
-    /* eslint-disable no-console */
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var username = q.username;
-    console.log("comments showname " + name);
-    console.log("comments username " + username);
     var comment = q.comment;
     var sql = "INSERT INTO comments (series_id, comment, user_id) VALUES\n" +
         "((SELECT series_id FROM all_series WHERE series_name=?),(?),\n" +
@@ -60,50 +49,43 @@ router.get("/addcomment", function (req, res) {
     con.query(sql, [name, comment, username],function (err, result) {
         if (err)
             throw (err);
-        else{
-            console.log(result);
-
-            res.send(JSON.stringify(result));
+        else {
+            res.send("comment added");
         }
     });
 });
 
 router.get("/recommend", function (req, res) {
-    /* eslint-disable no-console */
     var q = url.parse(req.url, true).query;
     var username = q.username;
-    console.log(username);
     var genre = q.genre;
-    console.log(genre);
     var sql = "SELECT series_name, votes, (score/votes) AS rating from all_series  " +
         "WHERE (score/votes>2) AND(genre2=? OR genre1=? OR genre3=? OR genre4=? OR genre5=?) " +
         "AND all_series.series_id NOT IN (SELECT series_id FROM ??);";
     con.query(sql, [genre, genre, genre, genre, genre, username],function (err, result) {
         if (err)
             throw (err);
-        else{
-            console.log(result);
-
+        else {
             res.send(JSON.stringify(result));
         }
     });
 });
 
 router.get("/show", function (req,res){
-    console.log("get show details");
     var q = url.parse(req.url, true).query;
     var showname = q.series_name;
-    var sql="SELECT s.series_name, g1.genre_name as genre_name1, g2.genre_name as genre_name2, g3.genre_name as genre_name3, g4.genre_name as genre_name4, g5.genre_name as genre_name5, s.votes, (s.score/s.votes) AS rating FROM all_series AS s LEFT JOIN genre AS g1 ON s.genre1=g1.genre_id LEFT JOIN genre AS g2 ON s.genre2=g2.genre_id LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id LEFT JOIN genre AS g4 ON s.genre4=g4.genre_id  LEFT JOIN genre AS g5 ON s.genre5=g5.genre_id WHERE s.series_name=?;" ;
+    var sql="SELECT s.series_name, g1.genre_name as genre_name1, g2.genre_name as genre_name2, g3.genre_name as genre_name3, " +
+        "g4.genre_name as genre_name4, g5.genre_name as genre_name5, s.votes, (s.score/s.votes) AS rating " +
+        "FROM all_series AS s LEFT JOIN genre AS g1 ON s.genre1=g1.genre_id LEFT JOIN genre AS g2 " +
+        "ON s.genre2=g2.genre_id LEFT JOIN genre AS g3 ON s.genre3=g3.genre_id LEFT JOIN genre AS g4 " +
+        "ON s.genre4=g4.genre_id  LEFT JOIN genre AS g5 ON s.genre5=g5.genre_id WHERE s.series_name=?;" ;
     con.query(sql, [showname], function (err, result) {
         if (err)
             throw (err);
         else {
-            console.log(result);
-
             res.send(JSON.stringify(result));
         }
     });
-
 });
 
 router.get("/addseries", function (req, res) {
@@ -201,7 +183,6 @@ router.get("/ownseries", function (req, res) {
         if (err) throw err;
         res.end(JSON.stringify(result));
     });
-
 });
 
 router.get("/editseries", function (req, res) {
@@ -252,39 +233,32 @@ router.get("/deleteseries", function (req, res) {
 });
 
 router.get("/deletecomment", function (req, res) {
-    console.log("delete comment");
     var q = url.parse(req.url, true).query;
     var commentID = q.commentid;
     var sql = "DELETE FROM comments WHERE comment_id=?";
     con.query(sql, [commentID], function (err, result){
         if(err) throw err;
-        console.log(result);
         res.end("comment deleted");
     })
 });
 
 router.post('/register', function(req, res) {
-    console.log("register");
-   //var q = url.parse(req.url, true).query;
     var username = req.body.name;
     var useremail = req.body.email;
     var userpassword = bcrypt.hashSync(req.body.password, 8);
-    console.log (username, useremail, userpassword);
     var sql ="SELECT user_id FROM users WHERE username=?";
     con.query(sql, [username], function (err, result) {
-        if (err) console.log(err);
+        if (err) throw err;
         if(result) {
             if (result.length > 0) {
                 res.send("This username is already in use");
             } else {
                 sql = "INSERT INTO USERS (username, email, password) VALUES ((?), (?), (?));";
                 con.query(sql, [username, useremail, userpassword], function (err, result) {
-                    if (err) console.log(err);//return res.status(500).send("There was a problem registering the user.");
-                    console.log(JSON.stringify(result));
+                    if (err) throw err;
                     sql = "CREATE TABLE ?? (series_id INT NOT NULL, season INT NOT NULL DEFAULT '1', episode INT NOT NULL DEFAULT '1',FOREIGN KEY (series_id) REFERENCES all_series(series_id));";
                     con.query(sql, [username], function (err, result) {
                         if (err) console.log(err);
-                        console.log(result);
                         sql = "SELECT * FROM users WHERE username = ?";
                         con.query(sql, [username], function (err, result) {
                             if (err) return res.status(500).send("There was a problem getting user");
@@ -293,7 +267,6 @@ router.post('/register', function(req, res) {
                             let token = jwt.sign({id: user.user_id}, configUser.secret, {
                                 expiresIn: 86400 // expires in 24 hours
                             });
-
                             res.status(200).send({auth: true, token: token, user: user});
                         });
                     })
@@ -318,8 +291,7 @@ router.post("/login", function(req, res) {
                 let token = jwt.sign({ id: user.user_id }, configUser.secret, { expiresIn: 86400 }); // expires in 24 hours
                 res.status(200).send({ auth: true, token: token, user: user });
             }
-        }
-        else {
+        } else {
             return res.status(404).send("user not found");
         }
     })

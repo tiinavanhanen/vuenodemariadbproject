@@ -17,7 +17,7 @@
                         <td>{{ show.series_name }} </td>
                         <td>{{show.genre_name1}} {{show.genre_name2}} {{show.genre_name3}} {{show.genre_name4}} {{ show.genre_name5}}</td>
                         <td>{{ show.votes }} </td>
-                        <td>{{ show.rating }}</td>
+                        <td>{{ show.rating  | numFormat('0.00') }}</td>
                     </tr>
                 </tbody>
             </table>

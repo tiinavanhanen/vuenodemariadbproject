@@ -107,7 +107,6 @@ router.get("/show", function (req,res){
 });
 
 router.get("/addseries", function (req, res) {
-    console.log("add series");
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var user = q.username;
@@ -117,33 +116,28 @@ router.get("/addseries", function (req, res) {
     con.query(sql, [user, name], function (err ,result) {
         if (result) {
             if (result.length > 0) {
-                console.log("sarja on jo omassa taulussa");
-                res.end("on jo");
+                res.end("already on list");
             } else {
-                console.log("sarjaa ei löytynyt omassa taulusta");
                 var sql = "SELECT series_id FROM all_series WHERE series_name=?";
                 con.query(sql, [name], function (err, result) {
                     if (result) {
                         if (result.length > 0) {
                             seriesID = result[0].series_id;
-                            console.log("found series id: " + seriesID);
                             addSeries(user, seriesID);
                         } else {
                             theMovieDb.search.getTv({"query": name}, function showSeries(data) {
                                 console.log(data);
                                 data = JSON.parse(data);
                                 if (data.total_results === 0) {
-                                    res.end("sarjaa ei löytynyt");
+                                    res.end("series not found");
                                 } else {
                                     genres = data.results[0].genre_ids;
-                                    console.log("genres: " + genres);
                                     var sql2 = "";
                                     if (genres.length === 1) {
                                         sql2 = "INSERT INTO all_series (series_name, genre1) VALUES (?,?)";
                                         con.query(sql2, [name, genres[0]], function(err, result) {
                                             if (err) throw err;
                                             seriesID = result.insertId;
-                                            console.log("1 genre series id: " + seriesID);
                                             addSeries(user, seriesID);
                                         });
                                     } else if (genres.length === 2) {
@@ -151,7 +145,6 @@ router.get("/addseries", function (req, res) {
                                         con.query(sql2, [name, genres[0], genres[1]], function(err, result) {
                                             if (err) throw err;
                                             seriesID = result.insertId;
-                                            console.log("2 genre series id: " + seriesID);
                                             addSeries(user, seriesID);
                                         });
                                     } else if (genres.length === 3) {
@@ -159,7 +152,6 @@ router.get("/addseries", function (req, res) {
                                         con.query(sql2, [name, genres[0], genres[1], genres[2]], function(err, result) {
                                             if (err) throw err;
                                             seriesID = result.insertId;
-                                            console.log("3 genre series id: " + seriesID);
                                             addSeries(user, seriesID);
                                         });
                                     } else if (genres.length === 4) {
@@ -167,7 +159,6 @@ router.get("/addseries", function (req, res) {
                                         con.query(sql2, [name, genres[0], genres[1], genres[2], genres[3]], function(err, result) {
                                             if (err) throw err;
                                             seriesID = result.insertId;
-                                            console.log("4 genre series id: " + seriesID);
                                             addSeries(user, seriesID);
                                         });
                                     } else if (genres.length === 5) {
@@ -175,14 +166,13 @@ router.get("/addseries", function (req, res) {
                                         con.query(sql2, [name, genres[0], genres[1], genres[2], genres[3], genres[4]], function(err, result) {
                                             if (err) throw err;
                                             seriesID = result.insertId;
-                                            console.log("5 genre series id: " + seriesID);
                                             addSeries(user, seriesID);
                                         });
                                     }
                                 }
                             }, function showError() {
                                 console.log("An error has occured in moviedb");
-                                res.end("sarjaa ei löytynyt");
+                                res.end("series not found");
                             });
                         }
                     } else {
@@ -198,52 +188,42 @@ router.get("/addseries", function (req, res) {
         var sql3 = "INSERT INTO ?? (series_id) VALUES (?)";
         con.query(sql3, [user, seriesID], function (err, result) {
             if (err) throw err;
-            console.log(JSON.stringify(result));
-            console.log("sarja lisätty");
-            res.end("sarja lisätty");
+            res.end("series added");
         });
     }
 });
 
 router.get("/ownseries", function (req, res) {
-    console.log("own series");
     var q = url.parse(req.url, true).query;
     var user = q.username;
     var sql = "SELECT s.series_name, u.season, u.episode FROM ?? AS u LEFT JOIN all_series AS s ON u.series_id=s.series_id";
     con.query(sql, [user], function (err, result) {
         if (err) throw err;
-        console.log("tiedot haettu: " + JSON.stringify(result));
         res.end(JSON.stringify(result));
     });
 
 });
 
 router.get("/editseries", function (req, res) {
-    console.log("edit series");
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var user = q.username;
     var episode = q.episode;
     var season = q.season;
     var score = q.score;
-    console.log("apissa: " + name + user + season + episode + score);
     var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, season, episode, name], function (err, result) {
         if (err) throw err;
-        console.log(JSON.stringify(result));
-        console.log("sarjan päivitys onnistui");
         if (!isNaN(score)) {
             score = parseFloat(score);
             var sql2 = "UPDATE all_series SET score=score+?, votes=votes+1 WHERE series_name=?";
             con.query(sql2, [score, name], function (err, result) {
                 if (err) throw err;
-                console.log(JSON.stringify(result));
-                console.log("arvostelun päivitys onnistui");
-                res.end("sarja ja arvostelu päivitetty");
+                res.end("series and rating updated");
             });
         } else {
             score = 0;
-            res.end("sarja päivitetty");
+            res.end("series updated");
         }
     });
 });
@@ -261,17 +241,13 @@ router.get("/genres", function (req, res){
 });
 
 router.get("/deleteseries", function (req, res) {
-    console.log("delete series");
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var user = q.username;
-    console.log("poistetaan" + name + user);
     var sql="DELETE FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, name], function (err, result) {
         if (err) throw err;
-        console.log(JSON.stringify(result));
-        console.log("poisto onnistui");
-        res.end("sarja poistettu");
+        res.end("series deleted");
     });
 });
 
@@ -328,22 +304,18 @@ router.post('/register', function(req, res) {
 });
 
 router.post("/login", function(req, res) {
-    console.log("login");
     var username = req.body.username;
     var password = req.body.password;
     var sql = "SELECT * FROM users WHERE username=?";
     con.query(sql, [username], function(err, result) {
         if (err) throw err;
         if (result.length > 0) {
-            console.log("user found");
             var user = JSON.stringify((result));
             var valid = bcrypt.compareSync(password, result[0].password);
             if (!valid) {
-                console.log("wrong password");
                 return res.status(401).send({ auth: false, token: null });
             } else {
                 let token = jwt.sign({ id: user.user_id }, configUser.secret, { expiresIn: 86400 }); // expires in 24 hours
-                console.log("user " + user);
                 res.status(200).send({ auth: true, token: token, user: user });
             }
         }

@@ -42,7 +42,6 @@
                             localStorage.setItem('username', this.username);
                             localStorage.setItem('jwt', response.data.token);
                             if (localStorage.getItem('jwt') != null) {
-                                this.$emit('logged in');
                                 this.error = false;
                                 if (this.$route.params.nextUrl != null) {
                                     this.$router.push(this.$route.params.nextUrl)

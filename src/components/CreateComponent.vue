@@ -85,13 +85,13 @@
                  */
                 check: false,
                 /**
-                 * the user inputted name of a series
+                 * @type {Object} the name of a series the user types into the search
                  */
                 series: {
                     series_name: '',
                 },
                 /**
-                 * a singular show loaded from the database containing its name, season, episode, and score
+                 * @type {Object} a singular show loaded from the database containing its name, season, episode, and score
                  */
                 show: {
                     series_name: '',
@@ -100,19 +100,19 @@
                     score: '',
                 },
                 /**
-                 * @type {[]}  array for shows loaded from the database
+                 * @type {[]} array for shows loaded from the database
                  */
                 shows: [],
                 /**
-                 * @type {[]}  array containing rating options
+                 * @type {[]} array containing rating options
                  */
                 options: [1,2,3,4,5],
                 /**
-                 * @type {series_name}  the name of the series being edited
+                 * @type {series_name} the name of the series being edited
                  */
                 editing: null,
                 /**
-                 * @type {boolean}  boolean flag to indicate that either the season or the episode is negative
+                 * @type {boolean} boolean flag to indicate that either the season or the episode is negative
                  */
                 isNegative: false,
             }
@@ -137,17 +137,17 @@
                     .then(response => {
                         // eslint-disable-next-line no-console
                         console.log(response);
-                        if (response.data === "on jo") {
+                        if (response.data === "already on list") {
                             this.check = true;
                             this.success = false;
                             this.error = false;
-                        } else if (response.data === "sarja lisätty") {
+                        } else if (response.data === "series added") {
                             this.success = true;
                             this.check = false;
                             this.error = false;
                             this.series.series_name = '';
                             this.loadShows();
-                        } else if (response.data === "sarjaa ei löytynyt") {
+                        } else if (response.data === "series not found") {
                             this.error = true;
                             this.check = false;
                             this.success = false;
@@ -173,7 +173,7 @@
             /**
              * Called when the user clicks the update button in edit mode
              * Updates the season, episode and rating of the series in the database
-             * @param show the series to be edited
+             * @param {show} show the series to be edited
              */
             editSeries(show) {
                 var loggedUser = localStorage.getItem('username');
@@ -200,7 +200,7 @@
             /**
              * Called when the user clicks the delete button in edit mode
              * Deletes the series from the current logged user's table in the database
-             * @param show the series to be deleted
+             * @param {show} show the series to be deleted
              */
             deleteSeries(show) {
                 var loggedUser = localStorage.getItem('username');
@@ -217,7 +217,7 @@
             /**
              * Called when the user clicks the edit button
              * Enables the editing of series on the current logged user's table
-             * @param series the series the user clicked and wishes to edit or delete
+             * @param {show} series the series the user clicked and wishes to edit or delete
              */
             editMode(series) {
                 this.cachedSeries = Object.assign({}, series);
@@ -228,7 +228,7 @@
             /**
              * Called when the user clicks the cancel button in edit mode
              * Cancels all edits done in edit mode and exits edit mode
-             * @param series the series the user clicked and wished to edit or delete
+             * @param {show} series the user clicked and wished to edit or delete
              */
             cancelEdit(series) {
                 Object.assign(series, this.cachedSeries);

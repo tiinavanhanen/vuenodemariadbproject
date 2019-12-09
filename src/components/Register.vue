@@ -23,6 +23,7 @@
             <div>
                 <input id="password-confirm" type="password" v-model="password_confirmation" required>
             </div>
+            <br>
             <div>
                 <button type="submit" @click="handleSubmit">
                     Register

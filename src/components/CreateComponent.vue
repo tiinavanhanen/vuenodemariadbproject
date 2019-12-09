@@ -5,7 +5,7 @@
             <h1>Add a show</h1>
             <form @submit.prevent="addSeries">
                 <label>Series name</label>
-                <input type="text" v-model="series.series_name"/>
+                <input id="showname" type="text" v-model="series.series_name"/>
                 <button>Add series</button>
                 <p v-if="success" class="success-message">
                     ✅ Series successfully added
@@ -250,5 +250,8 @@
     }
     .error-message {
         color: #d33c40;
+    }
+    #showname {
+        margin: 0.5em;
     }
 </style>

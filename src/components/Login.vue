@@ -6,6 +6,7 @@
             <div><input type="text" v-model="username" required autofocus/></div>
             <label>Password</label>
             <div><input type="password" v-model="password" required/></div>
+            <br>
             <div><button>Login</button></div>
             <p v-if="error" class="error-message">
                 ❗Incorrect username or password

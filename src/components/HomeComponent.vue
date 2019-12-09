@@ -1,7 +1,7 @@
 <template>
     <div class="row justify-content-center">
-        <div class="col-md-12">
-            <h2>Welcome to Serial Storage:
+        <div class="col-md-12" id="info">
+            <h2 class="heading">Welcome to Serial Storage:
                 a place where you can store and keep track of all the shows you are currently watching</h2>
         </div>
         <br>
@@ -22,3 +22,11 @@
         components: {Register, Login}
     }
 </script>
+<style scoped>
+    #info {
+        padding: 3em;
+    }
+    .heading  {
+        text-align: center;
+    }
+</style>

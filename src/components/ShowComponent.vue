@@ -15,7 +15,7 @@
                 <tbody>
                     <tr v-for="show in show" :key="show.series_name">
                         <td>{{ show.series_name }} </td>
-                        <td>{{show.genre_name1}}, {{show.genre_name2}}, {{show.genre_name3}}</td>
+                        <td>{{show.genre_name1}} {{show.genre_name2}} {{show.genre_name3}} {{show.genre_name4}} {{ show.genre_name5}}</td>
                         <td>{{ show.votes }} </td>
                         <td>{{ show.rating }}</td>
                     </tr>

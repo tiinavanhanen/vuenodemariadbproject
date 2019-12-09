@@ -50,11 +50,16 @@
                 show: {
                     genre: '',
                 },
+                /**
+                 * @type {[]}  array for shows loaded from the database
+                 */
                 shows: [],
                 isLoading: true,
                 selected: null,
-                options: [
-                ],
+                /**
+                 * @type {[]}  array containing rating options
+                 */
+                options: [],
                 option: {
                     value: '',
                     id: '',

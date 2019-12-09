@@ -41,11 +41,17 @@
         },
         data() {
             return {
+                /**
+                 * a singular show loaded from the database containing its name, votes and rating
+                 */
                 show: {
                     series_name: '',
                     votes: '',
                     rating: '',
                 },
+                /**
+                 * @type {[]}  array for shows loaded from the database
+                 */
                 shows: [],
                 isLoading: true,
             }

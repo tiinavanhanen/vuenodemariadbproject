@@ -72,23 +72,48 @@
         components: {MenuComponent},
         data() {
             return {
+                /**
+                 * @type {boolean}  boolean flag to indicate success in adding a series to the database
+                 */
                 success: false,
+                /**
+                 * @type {boolean}  boolean flag to indicate failure in adding a series to the database
+                 */
                 error: false,
+                /**
+                 * @type {boolean}  boolean flag to indicate that the series is already on the current user's table
+                 */
                 check: false,
+                /**
+                 * the user inputted name of a series
+                 */
                 series: {
                     series_name: '',
                 },
+                /**
+                 * a singular show loaded from the database containing its name, season, episode, and score
+                 */
                 show: {
                     series_name: '',
                     season: '',
                     episode: '',
                     score: '',
                 },
+                /**
+                 * @type {[]}  array for shows loaded from the database
+                 */
                 shows: [],
+                /**
+                 * @type {[]}  array containing rating options
+                 */
                 options: [1,2,3,4,5],
-                isLoading: true,
+                /**
+                 * @type {series_name}  the name of the series being edited
+                 */
                 editing: null,
-                submitting: false,
+                /**
+                 * @type {boolean}  boolean flag to indicate that either the season or the episode is negative
+                 */
                 isNegative: false,
             }
         },
@@ -100,7 +125,6 @@
             addSeries() {
                 // eslint-disable-next-line no-console
                 console.log("lisätään sarjaa");
-                this.submitting = true;
                 const body = {
                     "showname": this.series.series_name,
                     "loggedUser": localStorage.getItem('username'),
@@ -128,7 +152,6 @@
                             this.check = false;
                             this.success = false;
                         }
-                        this.submitting = false;
                     });
             },
             /**

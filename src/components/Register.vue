@@ -45,6 +45,10 @@
             }
         },
         methods : {
+            /**
+             * Called when the user clicks the register button
+             * Adds the new user to the database, creates the new user's table, and logs them in
+             */
             handleSubmit(e) {
                 this.check = false;
                 e.preventDefault();

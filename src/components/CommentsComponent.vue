@@ -94,6 +94,7 @@
                         /* eslint-disable no-console */
                         console.log(responce);
                         this.loadComments();
+                        this.show.comment = "";
                     });
             },
             /**

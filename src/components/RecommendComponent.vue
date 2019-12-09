@@ -21,7 +21,7 @@
                 <tr v-for="show in shows" :key="show.id" >
                     <td><router-link :to="{name: 'show', params: {series_name: show.series_name}}">{{ show.series_name }}</router-link> </td>
                     <td>{{ show.votes }} </td>
-                    <td>{{ show.rating }}</td>
+                    <td>{{ show.rating | numFormat('0.00') }} </td>
                 </tr>
                 </tbody>
             </table>
@@ -70,7 +70,7 @@
 
         methods:{
             /**
-             * Gets called when the genre is chosen and the "Display recommendatoins" button is pressed
+             * Gets called when the genre is chosen and the "Display recommendations" button is pressed
              */
             handleSubmit() {
                 const body = {

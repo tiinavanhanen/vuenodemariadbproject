@@ -14,6 +14,11 @@ Vue.component('v-select', vSelect);
 
 Vue.config.productionTip = false;
 
+import numeral from 'numeral';
+import numFormat from 'vue-filter-number-format';
+
+Vue.filter('numFormat', numFormat(numeral));
+
 import HomeComponent from './components/HomeComponent.vue';
 import CreateComponent from './components/CreateComponent.vue';
 import IndexComponent from './components/IndexComponent.vue';
@@ -126,7 +131,7 @@ const routes = [
 
 const router = new VueRouter({ mode: 'history', routes: routes});
 
-/*
+
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (localStorage.getItem('jwt') == null) {
@@ -150,6 +155,6 @@ router.beforeEach((to, from, next) => {
         })
     }
 });
-*/
+
 
 new Vue(Vue.util.extend({ router }, App)).$mount('#app');

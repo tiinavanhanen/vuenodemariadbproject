@@ -15,6 +15,7 @@
 </template>
 
 <script>
+
     export default {
         props: ["nextUrl"],
         data() {
@@ -45,7 +46,7 @@
                                 if (this.$route.params.nextUrl != null) {
                                     this.$router.push(this.$route.params.nextUrl)
                                 } else {
-                                    this.$router.push('/addseries')
+                                    this.$router.push('/home')
                                 }
                             }
                         }

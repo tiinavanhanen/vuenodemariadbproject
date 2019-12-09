@@ -1,5 +1,6 @@
 <template>
     <div class="row justify-content-center">
+        <menu-component></menu-component>
         <div class="col-md-8">
             <h1>All shows</h1>
             <table class="table table-striped" v-if="hasShows">
@@ -24,9 +25,11 @@
 </template>
 
 <script>
+    import MenuComponent from '../components/MenuComponent';
     const axios = require('axios');
     export default {
         name: "app",
+        components: {MenuComponent},
         props:['show.series_name'],
         computed: {
             hasShows() {

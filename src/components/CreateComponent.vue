@@ -1,5 +1,6 @@
 <template>
     <div class="row justify-content-center">
+        <menu-component></menu-component>
         <div class="col-md-8">
             <h1>Add a show</h1>
             <form @submit.prevent="addSeries">
@@ -64,9 +65,11 @@
 </template>
 
 <script>
+    import MenuComponent from '../components/MenuComponent';
     const axios = require('axios');
     export default {
         name: "app",
+        components: {MenuComponent},
         data() {
             return {
                 success: false,

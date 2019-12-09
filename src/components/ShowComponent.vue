@@ -1,5 +1,6 @@
 <template>
     <div class="row justify-content-center">
+        <menucomponent></menucomponent>
         <div class="col-md-8">
             <h1>Show details</h1>
             <table class="table table-striped">
@@ -28,10 +29,11 @@
 </template>
 
 <script>
+    import Menucomponent from '../components/MenuComponent';
     const axios = require('axios');
     export default {
         name: "ShowComponent",
-
+        components: {Menucomponent},
         props: {
             series_name: {
                 type: String,

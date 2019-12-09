@@ -22,14 +22,23 @@ import RecommendComponent from './components/RecommendComponent';
 import ShowComponent from './components/ShowComponent';
 import Register from './components/Register';
 import Login from "@/components/Login";
+import MenuComponent from "./components/MenuComponent";
 
 const routes = [
   {
-    name: 'home',
+    name: 'guestHome',
     path: '/',
     component: HomeComponent,
     meta: {
       guest: true
+    }
+  },
+  {
+    name: 'userHome',
+    path: '/home',
+    component: MenuComponent,
+    meta: {
+      requiresAuth: true
     }
   },
   {
@@ -117,6 +126,7 @@ const routes = [
 
 const router = new VueRouter({ mode: 'history', routes: routes});
 
+/*
 router.beforeEach((to, from, next) => {
     if (to.matched.some(record => record.meta.requiresAuth)) {
         if (localStorage.getItem('jwt') == null) {
@@ -140,5 +150,6 @@ router.beforeEach((to, from, next) => {
         })
     }
 });
+*/
 
 new Vue(Vue.util.extend({ router }, App)).$mount('#app');

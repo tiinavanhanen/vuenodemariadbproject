@@ -1,5 +1,6 @@
 <template>
     <div class="row justify-content-center">
+        <menu-component></menu-component>
         <div class="col-md-8">
             <h1>Comments</h1>
             <form @submit.prevent="loadComments">
@@ -41,9 +42,11 @@
 </template>
 
 <script>
+    import MenuComponent from '../components/MenuComponent'
     const axios = require('axios');
     export default {
         name: "app",
+        components: {MenuComponent},
         computed: {
             hasComments() {
                 return this.isLoading === false && this.comments.length > 0;

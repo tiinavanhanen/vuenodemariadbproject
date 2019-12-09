@@ -1,13 +1,14 @@
 <template>
     <div class="row justify-content-center">
+        <menu-component></menu-component>
         <div class="col-md-8">
-    <h1>Get recommendations</h1>
-        <form @submit.prevent="handleSubmit">
-            <v-select v-model="selected" :options="options" placeholder="Choose a genre">
+            <h1>Get recommendations</h1>
+            <form @submit.prevent="handleSubmit">
+                <v-select v-model="selected" :options="options" placeholder="Choose a genre">
                     {{option.label}}
-            </v-select>
-            <button>Display recommendations</button>
-        </form>
+                </v-select>
+                <button>Display recommendations</button>
+            </form>
             <table class="table table-striped" v-if="hasShows">
                 <thead>
                 <tr>
@@ -30,10 +31,12 @@
 </template>
 
 <script>
+    import MenuComponent from '../components/MenuComponent'
     import 'vue-select/dist/vue-select.css';
     const axios = require('axios');
     export default {
         name: "app",
+        components: {MenuComponent},
         computed: {
             hasShows() {
                 return this.isLoading === false && this.shows.length > 0;

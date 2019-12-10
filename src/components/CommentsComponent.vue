@@ -16,6 +16,9 @@
                 <br>
                 <button>Add</button>
             </form>
+            <p v-if="error" class="error-message">
+                ❗No empty comments, please
+            </p>
             <table class="table table-striped" v-if="hasComments">
                 <thead>
                     <tr>
@@ -105,7 +108,8 @@
                 selected: null,
                 isLoading: true,
                 //the name of the user that is logged in
-                loggedUser: localStorage.getItem('username')
+                loggedUser: localStorage.getItem('username'),
+                error: false
             }
         },
         methods:{
@@ -113,25 +117,31 @@
              * Gets called when the "Add" button is pressed in order to add a comment
              */
             handleCommentSubmit(){
-                const body = {
-                    "showname": this.selected.label,
-                    "comment": this.show.comment
-                };
-                var loggeduser = localStorage.getItem('username');
-                var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&username=" + loggeduser + "&comment=" + body.comment;
-                axios
-                    .get(uri)
-                    .then( responce => {
-                        /* eslint-disable no-console */
-                        console.log(responce);
-                        this.loadComments();
-                        this.show.comment = "";
-                    });
+                if (!this.show.comment.replace(/\s/g, '').length) {
+                    this.error = true;
+                }
+                else {
+                    const body = {
+                        "showname": this.selected.label,
+                        "comment": this.show.comment
+                    };
+                    var loggeduser = localStorage.getItem('username');
+                    var uri = "http://localhost:3000/api/addcomment/?showname=" + body.showname + "&username=" + loggeduser + "&comment=" + body.comment;
+                    axios
+                        .get(uri)
+                        .then(responce => {
+                            /* eslint-disable no-console */
+                            console.log(responce);
+                            this.loadComments();
+                            this.show.comment = "";
+                        });
+                }
             },
             /**
              * Gets called when the name of the show is chosen and the button "Display comments" is pressed or when a new comment has been added
              */
             loadComments() {
+                this.error = false;
                 document.getElementById("addComment").style="display: initial";
                 const body = {
                     "showname": this.selected.label

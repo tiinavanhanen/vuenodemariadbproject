@@ -25,16 +25,27 @@
 </template>
 
 <script>
+    //import the menu
     import MenuComponent from '../components/MenuComponent';
     const axios = require('axios');
     export default {
         name: "app",
+        //show the menu
         components: {MenuComponent},
+        //data for the ShowComponent - the name of the show
         props:['show.series_name'],
         computed: {
+            //boolean hasShows - show the table if there are shows
+            /**
+             * @type {boolean}  boolean flag  - show the table if there are shows
+             */
             hasShows() {
                 return this.isLoading === false && this.shows.length > 0;
             },
+            //boolean noShows - don't show the table, show the "No shows yet' message
+            /**
+             * @type {boolean}  boolean flag  - don't show the table, show the "No shows yet' message
+             */
             noShows() {
                 return this.isLoading === false && this.shows.length === 0;
             }
@@ -67,13 +78,10 @@
                     .get( "http://localhost:3000/api/all_shows")
                     .then( responce => {
                         this.isLoading = false;
-                        /* eslint-disable no-console */
-                        console.log( "got a result");
                         this.shows = responce.data;
-                        console.log(JSON.stringify(this.shows));
                     } )
                     .catch( err => {
-                        console.log( err );
+                        throw( err );
                     } );
             }
         },

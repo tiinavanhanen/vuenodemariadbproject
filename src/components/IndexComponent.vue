@@ -53,7 +53,7 @@
         data() {
             return {
                 /**
-                 * a singular show loaded from the database containing its name, votes and rating
+                 * a single show loaded from the database containing its name, votes and rating
                  */
                 show: {
                     series_name: '',

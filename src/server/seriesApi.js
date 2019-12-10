@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
+//database configuration
 const config = require('../db/db_config.js');
 const db = config.database;
 const url = require('url');
@@ -11,6 +12,7 @@ const configUser = require('./config');
 const con = mysql.createConnection({user: db.user, password: db.password, host: db.host, database: db.database});
 con.connect();
 
+//get the list of all shows
 router.get("/all_shows", function (req, res) {
     var sql = "SELECT series_name, votes, (score/votes) AS rating FROM all_series;";
     con.query(sql,  function (err, result) {
@@ -18,11 +20,11 @@ router.get("/all_shows", function (req, res) {
             throw (err);
         else {
             res.send(JSON.stringify(result));
-            /* eslint-enable no-console */
         }
     });
 });
 
+//get the list of all comments for a show
 router.get("/comments", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
@@ -38,6 +40,7 @@ router.get("/comments", function (req, res) {
     });
 });
 
+//add a comment
 router.get("/addcomment", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
@@ -55,6 +58,7 @@ router.get("/addcomment", function (req, res) {
     });
 });
 
+//get recommendations according to the genre and rating, only shows that are not in user's own table
 router.get("/recommend", function (req, res) {
     var q = url.parse(req.url, true).query;
     var username = q.username;
@@ -71,6 +75,7 @@ router.get("/recommend", function (req, res) {
     });
 });
 
+//details of one show
 router.get("/show", function (req,res){
     var q = url.parse(req.url, true).query;
     var showname = q.series_name;
@@ -108,7 +113,6 @@ router.get("/addseries", function (req, res) {
                             addSeries(user, seriesID);
                         } else {
                             theMovieDb.search.getTv({"query": name}, function showSeries(data) {
-                                console.log(data);
                                 data = JSON.parse(data);
                                 if (data.total_results === 0) {
                                     res.end("series not found");
@@ -153,7 +157,6 @@ router.get("/addseries", function (req, res) {
                                     }
                                 }
                             }, function showError() {
-                                console.log("An error has occured in moviedb");
                                 res.end("series not found");
                             });
                         }
@@ -168,13 +171,14 @@ router.get("/addseries", function (req, res) {
     });
     function addSeries(user, seriesID) {
         var sql3 = "INSERT INTO ?? (series_id) VALUES (?)";
-        con.query(sql3, [user, seriesID], function (err, result) {
+        con.query(sql3, [user, seriesID], function (err) {
             if (err) throw err;
             res.end("series added");
         });
     }
 });
 
+//get a list of all shows in user's table
 router.get("/ownseries", function (req, res) {
     var q = url.parse(req.url, true).query;
     var user = q.username;
@@ -185,6 +189,7 @@ router.get("/ownseries", function (req, res) {
     });
 });
 
+//change the data of a show (season, episode) and optionally give a rating
 router.get("/editseries", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
@@ -193,12 +198,12 @@ router.get("/editseries", function (req, res) {
     var season = q.season;
     var score = q.score;
     var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
-    con.query(sql, [user, season, episode, name], function (err, result) {
+    con.query(sql, [user, season, episode, name], function (err) {
         if (err) throw err;
         if (!isNaN(score)) {
             score = parseFloat(score);
             var sql2 = "UPDATE all_series SET score=score+?, votes=votes+1 WHERE series_name=?";
-            con.query(sql2, [score, name], function (err, result) {
+            con.query(sql2, [score, name], function (err) {
                 if (err) throw err;
                 res.end("series and rating updated");
             });
@@ -209,8 +214,8 @@ router.get("/editseries", function (req, res) {
     });
 });
 
+//get a list of all genres
 router.get("/genres", function (req, res){
-    console.log("get all genres");
     var sql = "SELECT * from genre;";
     con.query(sql, function(err, result){
         if(err)
@@ -221,48 +226,54 @@ router.get("/genres", function (req, res){
     })
 });
 
+//delete a show from user's table
 router.get("/deleteseries", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var user = q.username;
     var sql="DELETE FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
-    con.query(sql, [user, name], function (err, result) {
+    con.query(sql, [user, name], function (err) {
         if (err) throw err;
         res.end("series deleted");
     });
 });
 
+//delete a comment, user's can delete only own comments
 router.get("/deletecomment", function (req, res) {
     var q = url.parse(req.url, true).query;
     var commentID = q.commentid;
     var sql = "DELETE FROM comments WHERE comment_id=?";
-    con.query(sql, [commentID], function (err, result){
+    con.query(sql, [commentID], function (err){
         if(err) throw err;
         res.end("comment deleted");
     })
 });
 
+//register a new user
 router.post('/register', function(req, res) {
     var username = req.body.name;
     var useremail = req.body.email;
     var userpassword = bcrypt.hashSync(req.body.password, 8);
     var sql ="SELECT user_id FROM users WHERE username=?";
+    //check if user name is alreaady taken
     con.query(sql, [username], function (err, result) {
         if (err) throw err;
         if(result) {
             if (result.length > 0) {
                 res.send("This username is already in use");
-            } else {
+            }
+            //user doesn't exist yet, can be regisered with this name
+            else {
                 sql = "INSERT INTO USERS (username, email, password) VALUES ((?), (?), (?));";
-                con.query(sql, [username, useremail, userpassword], function (err, result) {
+                con.query(sql, [username, useremail, userpassword], function (err) {
                     if (err) throw err;
                     sql = "CREATE TABLE ?? (series_id INT NOT NULL, season INT NOT NULL DEFAULT '1', episode INT NOT NULL DEFAULT '1',FOREIGN KEY (series_id) REFERENCES all_series(series_id));";
-                    con.query(sql, [username], function (err, result) {
-                        if (err) console.log(err);
+                    //create a table for the new user's shows
+                    con.query(sql, [username], function (err) {
+                        if (err) throw(err);
                         sql = "SELECT * FROM users WHERE username = ?";
                         con.query(sql, [username], function (err, result) {
                             if (err) return res.status(500).send("There was a problem getting user");
-                            console.log(" here result is" + JSON.stringify(result));
                             var user = JSON.stringify((result));
                             let token = jwt.sign({id: user.user_id}, configUser.secret, {
                                 expiresIn: 86400 // expires in 24 hours

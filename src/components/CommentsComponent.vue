@@ -12,7 +12,7 @@
             <form @submit.prevent="handleCommentSubmit" id="addComment" style="display: none">
                 <label>Add comment</label>
                 <br>
-                <textarea class="col-md-8" v-model="show.comment" placeholder="add your comment"></textarea>
+                <textarea class="col-md-8" v-model="show.comment" placeholder="add your comment" required></textarea>
                 <br>
                 <button>Add</button>
             </form>

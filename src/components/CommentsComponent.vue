@@ -42,38 +42,69 @@
 </template>
 
 <script>
+    //import the menu
     import MenuComponent from '../components/MenuComponent'
     const axios = require('axios');
     export default {
         name: "app",
+        //show the menu
         components: {MenuComponent},
         computed: {
+            //boolean hasComments - show the table if there comments for this show
+            /**
+             * @type {boolean}  boolean flag  - show the table if there comments for this show
+             */
             hasComments() {
                 return this.isLoading === false && this.comments.length > 0;
             },
+            //boolean noComments - don't show the table, show the "No comments yet' message
+            /**
+             * @type {boolean}  boolean flag  - don't show the table, show the "No comments yet' message
+             */
             noComments() {
                 return this.isLoading === false && this.comments.length === 0;
             },
         },
         data() {
             return {
+                /**
+                 * @type {Object} comment object - the text of the comment, the user that left the comment and comment's id
+                 */
                 comment: {
                     comment: '',
                     username: '',
                     comment_id: ''
                 },
+                /**
+                 * @type {[]} array for comments loaded from the database
+                 */
                 comments: [],
+                /**
+                 * @type {Object} show object - the text of the new comment and the name of the show
+                 */
                 show: {
                     name: '',
                     comment:''
                 },
+                /**
+                 * @type {[]} array for shows loaded from the database with labels added
+                 */
                 options: [],
+                /**
+                 * @type {Object} option object - the name of the show and id in the list of options
+                 */
                 option: {
-                    value: '', label: ''
+                    value: '',
+                    label: ''
                 },
+                /**
+                 * @type {[]} array for shows loaded from the database
+                 */
                 shows: [],
+                //the selected show
                 selected: null,
                 isLoading: true,
+                //the name of the user that is logged in
                 loggedUser: localStorage.getItem('username')
             }
         },

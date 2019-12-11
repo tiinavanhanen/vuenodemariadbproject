@@ -93,12 +93,14 @@ router.get("/show", function (req,res){
     });
 });
 
+//add a series to the user's table
 router.get("/addseries", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
     var user = q.username;
     var genres = [];
     var seriesID = -1;
+    //check if the series is already on the user's table
     var sql = "SELECT series_id FROM ?? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?);";
     con.query(sql, [user, name], function (err ,result) {
         if (result) {
@@ -106,12 +108,15 @@ router.get("/addseries", function (req, res) {
                 res.end("already on list");
             } else {
                 var sql = "SELECT series_id FROM all_series WHERE series_name=?";
+                //check if the series is already in the database
                 con.query(sql, [name], function (err, result) {
                     if (result) {
                         if (result.length > 0) {
                             seriesID = result[0].series_id;
+                            //if it is, add it directly to the user's table
                             addSeries(user, seriesID);
                         } else {
+                            //if it isn't, search the MovieDb for a series of that name
                             theMovieDb.search.getTv({"query": name}, function showSeries(data) {
                                 data = JSON.parse(data);
                                 if (data.total_results === 0) {
@@ -119,6 +124,7 @@ router.get("/addseries", function (req, res) {
                                 } else {
                                     genres = data.results[0].genre_ids;
                                     var sql2 = "";
+                                    //check the number of genres, then add series to the all_series table in the database and the user's own table
                                     if (genres.length === 1) {
                                         sql2 = "INSERT INTO all_series (series_name, genre1) VALUES (?,?)";
                                         con.query(sql2, [name, genres[0]], function(err, result) {
@@ -169,6 +175,7 @@ router.get("/addseries", function (req, res) {
             throw err;
         }
     });
+    //add series into the user's table after the series exits in the database
     function addSeries(user, seriesID) {
         var sql3 = "INSERT INTO ?? (series_id) VALUES (?)";
         con.query(sql3, [user, seriesID], function (err) {
@@ -189,7 +196,7 @@ router.get("/ownseries", function (req, res) {
     });
 });
 
-//change the data of a show (season, episode) and optionally give a rating
+//change the data of a show (season, episode) and optionally give it a rating
 router.get("/editseries", function (req, res) {
     var q = url.parse(req.url, true).query;
     var name = q.showname;
@@ -200,6 +207,7 @@ router.get("/editseries", function (req, res) {
     var sql="UPDATE ?? SET season=?, episode=? WHERE series_id=(SELECT series_id FROM all_series WHERE series_name=?)";
     con.query(sql, [user, season, episode, name], function (err) {
         if (err) throw err;
+        //if the series has been given a rating
         if (!isNaN(score)) {
             score = parseFloat(score);
             var sql2 = "UPDATE all_series SET score=score+?, votes=votes+1 WHERE series_name=?";
@@ -287,10 +295,12 @@ router.post('/register', function(req, res) {
     })
 });
 
+//log in an existing user
 router.post("/login", function(req, res) {
     var username = req.body.username;
     var password = req.body.password;
     var sql = "SELECT * FROM users WHERE username=?";
+    //check if the user exists
     con.query(sql, [username], function(err, result) {
         if (err) throw err;
         if (result.length > 0) {

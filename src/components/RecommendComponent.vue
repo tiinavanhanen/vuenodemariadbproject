@@ -31,16 +31,26 @@
 </template>
 
 <script>
+    //import the menu
     import MenuComponent from '../components/MenuComponent'
     import 'vue-select/dist/vue-select.css';
     const axios = require('axios');
     export default {
         name: "app",
+        //show the menu
         components: {MenuComponent},
         computed: {
+            //boolean hasShows - show the table if there are shows to recommend
+            /**
+             * @type {boolean}  boolean flag  - show the table if there are shows to recommend
+             */
             hasShows() {
                 return this.isLoading === false && this.shows.length > 0;
             },
+            //boolean noShows - don't show the table, show the "No shows to recommend yet' message
+            /**
+             * @type {boolean}  boolean flag  - don't show the table, show the "No shows  to recommend yet' message
+             */
             noShows() {
                 return this.isLoading === false && this.shows.length === 0;
             }
@@ -55,11 +65,15 @@
                  */
                 shows: [],
                 isLoading: true,
+                //the selected genre
                 selected: null,
                 /**
-                 * @type {[]}  array containing rating options
+                 * @type {[]}  array containing genre options
                  */
                 options: [],
+                /**
+                 * @type {Object} option object - the name(label)  and the id of the genre in the list of options
+                 */
                 option: {
                     value: '',
                     id: '',

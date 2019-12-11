@@ -200,3 +200,8 @@
         }
     }
 </script>
+<style scoped>
+    .error-message {
+        color: #d33c40;
+    }
+</style>

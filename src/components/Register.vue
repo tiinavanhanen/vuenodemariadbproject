@@ -69,7 +69,6 @@
                                 localStorage.setItem('user',JSON.stringify(response.data.user));
                                 localStorage.setItem('username', this.name);
                                 localStorage.setItem('jwt',response.data.token);
-
                                 if (localStorage.getItem('jwt') != null){
                                     this.$emit('loggedIn');
                                     if(this.$route.params.nextUrl != null){
@@ -88,10 +87,14 @@
                 } else {
                     this.password = "";
                     this.password_confirmation = "";
-
                     return alert("Passwords do not match")
                 }
             }
         }
     }
 </script>
+<style scoped>
+    .error-message {
+        color: #d33c40;
+    }
+</style>

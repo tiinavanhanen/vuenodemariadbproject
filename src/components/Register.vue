@@ -53,7 +53,7 @@
             handleSubmit(e) {
                 this.check = false;
                 e.preventDefault();
-                if (this.password === this.password_confirmation && this.password.length > 0)
+                if (this.password === this.password_confirmation && this.password.length > 0 && this.password.replace(/\s/g, '').length >0)
                 {
                     let url = "http://localhost:3000/api/register";
                     this.$http.post(url, {
@@ -84,7 +84,12 @@
                             /* eslint-disable no-console */
                             console.error(error);
                         });
-                } else {
+                } else if (!this.password.replace(/\s/g, '').length >0) {
+                    this.password = "";
+                    this.password_confirmation = "";
+                    return alert("Password can't contain empty spaces")
+                }
+                else {
                     this.password = "";
                     this.password_confirmation = "";
                     return alert("Passwords do not match")
